@@ -1,0 +1,2 @@
+rootProject.name = "Digital_Agent_Background_Rework"
+include ':app'

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.learnMore.LearnMoreFragment">
+
+    <Button
+        android:id="@+id/backToMainButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/deep_blue"
+        android:text="Home"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.015"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.01" />
+
+    <TextView
+        android:id="@+id/videoDialogueBubble"
+        android:layout_width="265dp"
+        android:layout_height="101dp"
+        android:background="@drawable/speech_bubble_background"
+        android:backgroundTint="#00BCD4"
+        android:padding="10dp"
+        android:paddingStart="20dp"
+        android:text="Interested in learning more? Let's watch a video together, or bookmark it for later."
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="@+id/descriptionBubble"
+        app:layout_constraintStart_toStartOf="@+id/descriptionBubble"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionBubble" />
+
+    <TextView
+        android:id="@+id/descriptionBubble"
+        android:layout_width="264dp"
+        android:layout_height="196dp"
+        android:background="@drawable/speech_bubble_background"
+        android:backgroundTint="#00BCD4"
+        android:padding="10dp"
+        android:paddingStart="20dp"
+        android:text="A microwave is an electronic device typically found in the kitchen that heats up food using microwave radiation. Microwave radiation is an electromagnetic wave that is the right frequency to heat up water found in food, which in turn can heat up the food itself. lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="@+id/topicBubble"
+        app:layout_constraintStart_toStartOf="@+id/topicBubble"
+        app:layout_constraintTop_toBottomOf="@+id/topicBubble" />
+
+    <TextView
+        android:id="@+id/topicBubble"
+        android:layout_width="265dp"
+        android:layout_height="101dp"
+        android:layout_marginTop="120dp"
+        android:background="@drawable/speech_bubble_background"
+        android:backgroundTint="#00BCD4"
+        android:padding="10dp"
+        android:paddingStart="20dp"
+        android:text="Let's learn together about XYZ principle."
+        android:textColor="#000000"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="52dp"
+        android:layout_height="57dp"
+        app:layout_constraintBottom_toBottomOf="@+id/videoDialogueBubble"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.013"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/videoDialogueBubble"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/emma" />
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stove - Induction"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backToMainButton"
+        app:layout_constraintVertical_bias="0.024" />
+
+    <Button
+        android:id="@+id/watchVideoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#3F51B5"
+        android:fontFamily="sans-serif-medium"
+        android:text="Watch video"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/videoDialogueBubble" />
+
+    <ToggleButton
+        android:id="@+id/bookmarkToggle"
+        style="@style/toggleButton"
+        android:layout_width="53dp"
+        android:layout_height="49dp"
+        android:background="@drawable/bookmark_toggle_bg"
+        android:backgroundTint="#FFC107"
+        app:layout_constraintBottom_toBottomOf="@+id/watchVideoButton"
+        app:layout_constraintEnd_toEndOf="@+id/topicBubble"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/watchVideoButton"
+        app:layout_constraintTop_toTopOf="@+id/watchVideoButton"
+        app:layout_constraintVertical_bias="0.0" />
+</androidx.constraintlayout.widget.ConstraintLayout>

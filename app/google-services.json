@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "426881294022",
+    "firebase_url": "https://elx-digital-agent-background-default-rtdb.firebaseio.com",
+    "project_id": "elx-digital-agent-background",
+    "storage_bucket": "elx-digital-agent-background.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:426881294022:android:538d61c53b7547b44841c7",
+        "android_client_info": {
+          "package_name": "com.example.digital_agent_background"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "426881294022-pbrn5u544ojbd3nmlq6dblhkk8k6m4u1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAczRVfDBuOcDYm3grxkjuomErldBYchcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "426881294022-pbrn5u544ojbd3nmlq6dblhkk8k6m4u1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:426881294022:android:0cdf6bc54f6aff484841c7",
+        "android_client_info": {
+          "package_name": "com.example.testapp2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "426881294022-pbrn5u544ojbd3nmlq6dblhkk8k6m4u1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAczRVfDBuOcDYm3grxkjuomErldBYchcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "426881294022-pbrn5u544ojbd3nmlq6dblhkk8k6m4u1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
