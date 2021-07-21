@@ -49,7 +49,7 @@
         android:layout_height="154dp"
         android:layout_marginBottom="44dp"
         android:background="@drawable/speech_bubble_background"
-        android:backgroundTint="#BDF6FD"
+        android:backgroundTint="@color/light_blue"
         android:includeFontPadding="true"
         android:padding="10dp"
         android:paddingStart="20dp"
