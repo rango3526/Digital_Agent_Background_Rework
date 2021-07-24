@@ -13,5 +13,5 @@
     <string name="menu_slideshow">Slideshow</string>
     <string name="menu_lesson">Lesson</string>
     <string name="menu_learnMore">Learn More</string>
-    <string name="menu_avatarSelect">Select New Avatar</string>
+    <string name="menu_avatarSelect">Choose an Avatar</string>
 </resources>

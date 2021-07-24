@@ -26,6 +26,7 @@ import com.example.testapp2.GlobalVars;
 import com.example.testapp2.HelperCode;
 import com.example.testapp2.R;
 import com.example.testapp2.databinding.FragmentHomeBinding;
+import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
 import com.example.testapp2.ui.gallery.GalleryFragment;
 import com.example.testapp2.BuildConfig;
 import com.google.android.gms.tasks.OnCanceledListener;
@@ -145,6 +146,10 @@ public class HomeFragment extends Fragment {
         // Begin searching for photos
         HelperCode.initializeAlarmManager(context);
         HelperCode.setTestAlarm(context);
+
+//        AvatarSelectFragment.prepareAvatarData(getActivity());
+
+        binding.avatarImageView.setImageURI(AvatarSelectFragment.getCurAvatar(getActivity()).getImageUri());
 
         return root;
     }

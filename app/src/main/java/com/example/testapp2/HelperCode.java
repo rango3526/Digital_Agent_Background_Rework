@@ -124,4 +124,8 @@ public class HelperCode {
             Toast.makeText(context,"Background refresh stopped", Toast.LENGTH_SHORT).show();
         }
     }
+
+    public static void setAvatarNamePref(Context context, String name) {
+        getSharedPrefsObj(context).edit().putString(GlobalVars.AVATAR_NAME_PREF_KEY, name).apply();
+    }
 }

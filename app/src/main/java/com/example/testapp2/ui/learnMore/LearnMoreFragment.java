@@ -22,6 +22,7 @@ import com.example.testapp2.MyImage;
 import com.example.testapp2.ObjectLesson;
 import com.example.testapp2.R;
 import com.example.testapp2.databinding.FragmentLearnMoreBinding;
+import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
 import com.example.testapp2.ui.gallery.GalleryFragment;
 import com.example.testapp2.ui.learnMore.LearnMoreViewModel;
 
@@ -89,6 +90,8 @@ public class LearnMoreFragment extends Fragment {
                 GalleryFragment.setImageBookmark(context, mi.imageID, isChecked);
             }
         });
+
+        binding.avatarImageView.setImageURI(AvatarSelectFragment.getCurAvatar(getActivity()).getImageUri());
 
         return root;
     }

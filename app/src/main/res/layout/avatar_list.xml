@@ -40,7 +40,7 @@
             android:id="@+id/storyText"
             android:layout_width="236dp"
             android:layout_height="386dp"
-            android:layout_above="@+id/button"
+            android:layout_above="@+id/avatarSelectButton"
             android:layout_below="@+id/avatarImageView"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="21dp"
@@ -49,7 +49,7 @@
             android:textSize="13sp" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/avatarSelectButton"
             android:layout_width="113dp"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
