@@ -100,7 +100,7 @@ public class HelperCode {
     public static void setTestAlarm(Context context) {
         AlarmReceiver.alarmTriggered(context);
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5000, 5000, alarmPendingIntent);
-        Toast.makeText(context,"I'll analyze your photos periodically in the background", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context,"I'll analyze your photos periodically in the background", Toast.LENGTH_SHORT).show();
 
         ComponentName receiver = new ComponentName(context, AlarmBootReceiver.class);
         PackageManager pm = context.getPackageManager();
