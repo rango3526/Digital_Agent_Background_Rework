@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
+        android:id="@+id/nav_gallery_bookmarked"
+        android:name="com.example.testapp2.ui.gallery.GalleryFragment"
+        android:label="@string/menu_gallery_bookmarked"
+        tools:layout="@layout/fragment_gallery" />
+
+    <fragment
         android:id="@+id/nav_slideshow"
         android:name="com.example.testapp2.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
@@ -34,4 +40,10 @@
         android:name="com.example.testapp2.ui.learnMore.LearnMoreFragment"
         android:label="@string/menu_learnMore"
         tools:layout="@layout/fragment_learn_more" />
+
+    <fragment
+        android:id="@+id/nav_avatarSelect"
+        android:name="com.example.testapp2.ui.avatarSelect.AvatarSelectFragment"
+        android:label="@string/menu_avatarSelect"
+        tools:layout="@layout/fragment_avatar_select" />
 </navigation>

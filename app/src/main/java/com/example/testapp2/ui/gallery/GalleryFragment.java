@@ -38,7 +38,7 @@ public class GalleryFragment extends Fragment {
 
     RecyclerView recyclerView;
     static SharedPreferences sharedPreferences;
-    boolean onlyBookmarks = false;
+    static boolean onlyBookmarks = false;
     ArrayList<MyImage> myImages = new ArrayList<>();
 
     Context context;
@@ -57,12 +57,10 @@ public class GalleryFragment extends Fragment {
 
             }
         });
-        // ^^^ Above is default
 
+        // ^^^ Above is default
         context = getActivity();
 
-        Intent prevIntent = getActivity().getIntent();
-        onlyBookmarks = prevIntent.getBooleanExtra("onlyBookmarks", false);
         binding.bookmarkSwitch.setChecked(onlyBookmarks);
 
         recyclerView = binding.imageRecyclerView;
@@ -79,7 +77,7 @@ public class GalleryFragment extends Fragment {
         binding.bookmarkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                switchBookmarkFilter(context, getActivity().getSupportFragmentManager(), isChecked);
+                switchBookmarkFilter(isChecked);
             }
         });
 
@@ -112,7 +110,8 @@ public class GalleryFragment extends Fragment {
         }
     }
 
-    public void switchBookmarkFilter(Context context, FragmentManager fragmentManager, boolean onlyBookmarks) {
+    public void switchBookmarkFilter(boolean onlyBookmarks) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         initRecyclerView(context, fragmentManager, onlyBookmarks);
     }
 
@@ -183,5 +182,9 @@ public class GalleryFragment extends Fragment {
 
         Log.e("Stuff", "That imageID was not found");
         throw new RuntimeException("imageID not found");
+    }
+
+    public static void trySetBookmarkFilter(boolean _onlyBookmarks) {
+        onlyBookmarks = _onlyBookmarks;
     }
 }

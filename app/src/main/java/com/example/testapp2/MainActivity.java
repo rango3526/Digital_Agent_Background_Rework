@@ -1,14 +1,21 @@
 package com.example.testapp2;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.testapp2.ui.gallery.GalleryFragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -16,6 +23,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.testapp2.databinding.ActivityMainBinding;
+
+import org.jetbrains.annotations.NotNull;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,16 +37,6 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        // My addition
-        Toolbar toolbar = (Toolbar) binding.appBarMain.toolbar;
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: Fix bookmark stuff here
-            }
-        });
-        // End my addition
 
         setSupportActionBar(binding.appBarMain.toolbar);
         binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
@@ -52,10 +51,27 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_lesson, R.id.nav_learnMore)
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_lesson, R.id.nav_learnMore, R.id.nav_avatarSelect)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+
+        // My addition
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull @NotNull NavController controller, @NonNull @NotNull NavDestination destination, @Nullable @org.jetbrains.annotations.Nullable Bundle arguments) {
+//                Log.w("Stuff", "Controller: " + controller.toString() + ", destination: " + destination.getLabel());
+                if (destination.getLabel().equals(getResources().getString(R.string.menu_gallery_bookmarked))) {
+//                    Log.e("Stuff", "Now in bookmark section");
+                    GalleryFragment.trySetBookmarkFilter(true);
+                }
+                else if (destination.getLabel().equals(getResources().getString(R.string.menu_gallery))) {
+//                    Log.e("Stuff", "Now in section: " + destination.getLabel());
+                    GalleryFragment.trySetBookmarkFilter(false);
+                }
+            }
+        });
+        // End my addition
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 

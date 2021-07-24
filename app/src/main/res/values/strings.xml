@@ -9,7 +9,9 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">View All Lessons</string>
+    <string name="menu_gallery_bookmarked">View Bookmarked Lessons</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="menu_lesson">Lesson</string>
     <string name="menu_learnMore">Learn More</string>
+    <string name="menu_avatarSelect">Select New Avatar</string>
 </resources>
