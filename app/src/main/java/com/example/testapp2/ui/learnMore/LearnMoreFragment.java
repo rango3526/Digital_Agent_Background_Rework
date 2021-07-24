@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,13 +19,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.testapp2.MainActivity;
 import com.example.testapp2.MyImage;
 import com.example.testapp2.ObjectLesson;
-import com.example.testapp2.R;
 import com.example.testapp2.databinding.FragmentLearnMoreBinding;
 import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
-import com.example.testapp2.ui.gallery.GalleryFragment;
-import com.example.testapp2.ui.learnMore.LearnMoreViewModel;
-
-import java.util.HashMap;
+import com.example.testapp2.ui.gallery.LessonListFragment;
 
 public class LearnMoreFragment extends Fragment {
 
@@ -64,7 +59,7 @@ public class LearnMoreFragment extends Fragment {
         String videoLink = ol.getVideoLink();
 
         binding.titleText.setText(objectDisplayName + " - " + lessonTopic);
-        binding.descriptionBubble.setText(objectDescription);
+        binding.descriptionBubble.setText(objectDescription + "\n\n\n"); // Added newlines to fit speech bubble better
         binding.topicBubble.setText("Let's learn together about " + lessonTopic + "!");
         binding.bookmarkToggle.setChecked(mi.bookmarked);
 
@@ -87,7 +82,7 @@ public class LearnMoreFragment extends Fragment {
         binding.bookmarkToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                GalleryFragment.setImageBookmark(context, mi.imageID, isChecked);
+                LessonListFragment.setImageBookmark(context, mi.imageID, isChecked);
             }
         });
 

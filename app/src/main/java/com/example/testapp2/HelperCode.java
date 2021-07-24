@@ -78,7 +78,7 @@ public class HelperCode {
     }
 
     public static Intent getIntentForObjectLesson(Context context, MyImage mi) {
-        Intent intent = new Intent(context, LessonFragment.class);
+        Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("objectFound", mi.objectDetected);
         intent.putExtra("imageUri", mi.uriString);

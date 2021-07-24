@@ -14,14 +14,14 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import com.example.testapp2.ui.gallery.GalleryFragment;
+import com.example.testapp2.ui.gallery.LessonListFragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -76,7 +76,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
 
     private static List<MyImage> getAllImages(Context context) {
-
+        // for preventing duplicates
+        HashMap<Long, Integer> idTable = new HashMap<Long, Integer>();
 
         List<MyImage> imageList = new ArrayList<MyImage>();
 
@@ -116,7 +117,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
             int dateTakenColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED);
 
-            Log.w("MyImageBegin", "Before while");
+//            Log.w("MyImageBegin", "Before while");
             while (cursor.moveToNext()) {
 //                Log.w("MyImageBegin", "In while");
                 // Get values of columns for a given video.
@@ -130,7 +131,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                 // Stores column values and the contentUri in a local object
                 // that represents the media file.
-                imageList.add(new MyImage(contentUri, name, size, dateTaken, "", id));
+                if (!idTable.containsKey(id)) {
+                    imageList.add(new MyImage(contentUri, name, size, dateTaken, "", id));
+                    idTable.put(id, 1);
+                }
 //                Log.w("MyImage Stuff", contentUri.toString() + " " + name + " " + size + " " + dateTaken);
             }
         }
@@ -139,18 +143,18 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
         long endTime = SystemClock.elapsedRealtime();
 
-        Log.w("Timing", "Time to find images: " + (endTime-startTime));
+//        Log.w("Timing", "Time to find images: " + (endTime-startTime));
 
         return imageList;
     }
 
     private static void analyzeImages(Context context, List<MyImage> images) {
         for (MyImage mi : images) {
-            Log.w("Stuff", "Analyzing new image: " + mi.name + " at " + mi.uriString);
+            Log.w("Stuff", "Analyzing new image: " + mi.fileName + " at " + mi.uriString);
             String result = MachineLearningManager.AnalyzeImage(context, Uri.parse(mi.uriString));
             if (FirebaseManager.firestoreObjectNameExists(result)) {
                 mi.objectDetected = result;
-                GalleryFragment.addMyImage(context, mi);
+                LessonListFragment.addMyImage(context, mi);
                 sendNotification(context, mi);
             }
         }
@@ -158,6 +162,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     public static void alarmTriggered(Context context) {
         int latestDate = 0;
+
+        // TODO: (Maybe) prevent notifications from covering each other? Right now only one can show at a time, and sequential ones replace previous ones
 
         createNotificationChannel(context);
 //        Toast.makeText(context, "Checking for new photos...", Toast.LENGTH_SHORT).show();
@@ -169,19 +175,22 @@ public class AlarmReceiver extends BroadcastReceiver {
         latestDate = sharedPreferences.getInt(GlobalVars.LATEST_DATE_PREF_KEY, (int) System.currentTimeMillis()/1000);
 
         int newLatestDate = latestDate;
+        int maxNewLatestDate = latestDate;
 
-        Log.w("Stuff", "Latest date: " + latestDate);
+        Log.e("Stuff", "Latest date: " + latestDate);
 
         // TODO: Optimize this by checking from latest to earliest, then stopping when appropriate (they are already sorted by date_taken in getAllImages(), though idk which direction)
         for (MyImage mi : updatedImages) {
             if (mi.dateTaken > latestDate) {
                 newLatestDate = mi.dateTaken;
+                if (newLatestDate > maxNewLatestDate)
+                    maxNewLatestDate = newLatestDate;
                 newlyTaken.add(mi);
-                //Log.w("Stuff", "Added new image taken at " + mi.dateTaken + " and latest was at: " + latestDate);
+                Log.e("Stuff", "Added new image taken at " + mi.dateTaken + " and latest was at: " + latestDate);
             }
         }
 
-        latestDate = newLatestDate;
+        latestDate = maxNewLatestDate;
         sharedPreferences.edit().putInt(GlobalVars.LATEST_DATE_PREF_KEY, latestDate).apply();
         analyzeImages(context, newlyTaken);
 

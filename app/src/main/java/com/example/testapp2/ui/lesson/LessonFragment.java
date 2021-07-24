@@ -28,9 +28,8 @@ import com.example.testapp2.ObjectLesson;
 import com.example.testapp2.R;
 import com.example.testapp2.databinding.FragmentLessonBinding;
 import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
-import com.example.testapp2.ui.gallery.GalleryFragment;
+import com.example.testapp2.ui.gallery.LessonListFragment;
 import com.example.testapp2.ui.learnMore.LearnMoreFragment;
-import com.example.testapp2.ui.lesson.LessonViewModel;
 
 public class LessonFragment extends Fragment {
 
@@ -107,7 +106,7 @@ public class LessonFragment extends Fragment {
         binding.bookmarkToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                GalleryFragment.setImageBookmark(context, mi.imageID, isChecked);
+                LessonListFragment.setImageBookmark(context, mi.imageID, isChecked);
             }
         });
 

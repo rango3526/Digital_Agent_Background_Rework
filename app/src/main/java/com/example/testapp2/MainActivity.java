@@ -1,17 +1,17 @@
 package com.example.testapp2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 
 import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
-import com.example.testapp2.ui.gallery.GalleryFragment;
+import com.example.testapp2.ui.gallery.LessonListFragment;
+import com.example.testapp2.ui.lesson.LessonFragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
@@ -68,19 +68,42 @@ public class MainActivity extends AppCompatActivity {
 //                Log.w("Stuff", "Controller: " + controller.toString() + ", destination: " + destination.getLabel());
                 if (destination.getLabel().equals(getResources().getString(R.string.menu_gallery_bookmarked))) {
 //                    Log.e("Stuff", "Now in bookmark section");
-                    GalleryFragment.trySetBookmarkFilter(true);
+                    LessonListFragment.trySetBookmarkFilter(true);
                 }
                 else if (destination.getLabel().equals(getResources().getString(R.string.menu_gallery))) {
 //                    Log.e("Stuff", "Now in section: " + destination.getLabel());
-                    GalleryFragment.trySetBookmarkFilter(false);
+                    LessonListFragment.trySetBookmarkFilter(false);
                 }
             }
         });
+
         // End my addition
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
         // ^^^ Above is the default code
+
+        // if avatar hasn't been chosen yet, chose it now
+        if (!HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.AVATAR_NAME_PREF_KEY))
+            navController.navigate(R.id.nav_avatarSelect);
+
+        Intent intent = getIntent();
+        if (intent != null && intent.getStringExtra("objectFound") != null) {
+//            Log.e("Stuff", "Should send to lesson now");
+            long myImageID = intent.getLongExtra("myImageID", -1);
+            if (myImageID == -1) {
+                throw new RuntimeException("Did not find proper image ID in notification intent");
+            }
+            MyImage curImage = LessonListFragment.getMyImageByID(getApplicationContext(), myImageID);
+            LessonFragment lessonFragment = new LessonFragment();
+            lessonFragment.setLessonData(curImage);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content_main_layout, lessonFragment, "fragmentTag")
+                    .addToBackStack(null)
+                    .commit();
+        }
+
+        FirebaseManager.updateFirestoreObjectLessons();
     }
 
     @Override

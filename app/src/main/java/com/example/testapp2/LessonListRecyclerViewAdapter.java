@@ -1,10 +1,8 @@
 package com.example.testapp2;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,15 +15,11 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.testapp2.ui.gallery.GalleryFragment;
+import com.example.testapp2.ui.gallery.LessonListFragment;
 import com.example.testapp2.ui.lesson.LessonFragment;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -34,13 +28,15 @@ public class LessonListRecyclerViewAdapter extends RecyclerView.Adapter<LessonLi
 //    ArrayList<String> objectNames = new ArrayList<>();
 //    ArrayList<String> imagesUriStrings = new ArrayList<>();
     ArrayList<MyImage> myImages = new ArrayList<>();
+    ArrayList<ObjectLesson> objectLessons = new ArrayList<>();
     Context context;
     FragmentManager fragmentManager;
 
-    public LessonListRecyclerViewAdapter(ArrayList<MyImage> myImages, FragmentManager fragmentManager, Context context) {
+    public LessonListRecyclerViewAdapter(ArrayList<MyImage> myImages, ArrayList<ObjectLesson> objectLessons, FragmentManager fragmentManager, Context context) {
 //        this.objectNames = objectNames;
 //        this.imagesUriStrings = imagesUriStrings;
         this.myImages = myImages;
+        this.objectLessons = objectLessons;
         this.context = context;
         this.fragmentManager = fragmentManager;
     }
@@ -59,19 +55,32 @@ public class LessonListRecyclerViewAdapter extends RecyclerView.Adapter<LessonLi
         Log.w("Stuff", "onBindViewHolder called");
 
         MyImage curImage = myImages.get(position);
+        ObjectLesson objectLesson;
+        if (objectLessons.size() == myImages.size())
+            objectLesson = objectLessons.get(position);
+        else
+            objectLesson = null;
 
 //        Log.w("Stuff", "Before uri string: " + String.join(", ", imagesUriStrings));
         String uriString = curImage.uriString;
         Log.w("Stuff", "uriString: " + uriString);
 
         holder.imageView.setImageURI(Uri.parse(uriString));
-        holder.objectName.setText(curImage.objectDetected);
+        if (objectLesson == null)
+            holder.objectName.setText(curImage.objectDetected);
+        else
+            holder.objectName.setText(objectLesson.getObjectDisplayName() + " |   " + objectLesson.getLessonTopic());
         holder.bookmarkToggle.setChecked(curImage.bookmarked);
 
         holder.bookmarkToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                GalleryFragment.setImageBookmark(context, curImage.imageID, isChecked);
+                Log.e("Bookmark stuff", "Image bookmarked: " + curImage.objectDetected + ", id: " + curImage.imageID + ", is checked before: " + curImage.bookmarked);
+                LessonListFragment.setImageBookmark(context, curImage.imageID, isChecked);
+                ArrayList<MyImage> allImages = LessonListFragment.getImageHistory(context);
+                for (MyImage mi : allImages) {
+                    Log.e("Stuff", "" + mi.imageID);
+                }
             }
         });
 
@@ -123,7 +132,6 @@ public class LessonListRecyclerViewAdapter extends RecyclerView.Adapter<LessonLi
             objectName = itemView.findViewById(R.id.objectTextView);
             parentLayout = itemView.findViewById(R.id.parent_layout);
             bookmarkToggle = itemView.findViewById(R.id.bookmarkToggle);
-            //TODO: set values of those fields (with binding stuff)
         }
     }
 }

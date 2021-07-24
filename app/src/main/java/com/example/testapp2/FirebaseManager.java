@@ -120,14 +120,14 @@ public class FirebaseManager {
         if (!initialized)
             initFirebaseManager();
 
-        Log.w("Stuff", "Updating Firestore objectLessons...");
+//        Log.w("Stuff", "Updating Firestore objectLessons...");
 
         firestoreReference.collection("objectLessons").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d("FirestoreResult", document.getId() + " => " + document.getData());
+//                        Log.d("FirestoreResult", document.getId() + " => " + document.getData());
                         //String[] values = {"objectDisplayName", "definition", "lessonTopic", "videoLink"};
                         objectLessons.put(document.getId(), new HashMap<String, String>());
                         for (ObjectLesson.hashmapKeys enumVal : ObjectLesson.hashmapKeys.values()) {
@@ -135,17 +135,17 @@ public class FirebaseManager {
                                 objectLessons.get(document.getId()).put(enumVal.name(), (String) document.getId());
                                 continue;
                             }
-                            Log.w("Firebase val", enumVal + ": " + (String) document.getData().get(enumVal.name()));
+//                            Log.w("Firebase val", enumVal + ": " + (String) document.getData().get(enumVal.name()));
                             objectLessons.get(document.getId()).put(enumVal.name(), (String) document.getData().get(enumVal.name()));
                         }
                     }
                 } else {
-                    Log.w("Stuff", "Error getting documents.", task.getException());
+                    Log.e("Stuff", "Error getting documents.", task.getException());
                 }
             }
         });
 
-        Log.w("Stuff", "After update Firestore objectLessons");
+        Log.e("Stuff", "After update Firestore objectLessons");
     }
 
     public static boolean firestoreObjectNameExists(String objectName) {
@@ -159,7 +159,7 @@ public class FirebaseManager {
             return ol;
         }
         catch (Exception e) {
-            Log.w("Firebase stuff", "Hashmap null, internet probably bad");
+            Log.e("Firebase stuff", "Hashmap null, internet probably bad");
             return null;
         }
     }

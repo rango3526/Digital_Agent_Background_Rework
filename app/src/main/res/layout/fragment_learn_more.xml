@@ -14,10 +14,10 @@
         android:text="Home"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.015"
+        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.01" />
+        app:layout_constraintVertical_bias="0.023" />
 
     <TextView
         android:id="@+id/videoDialogueBubble"
@@ -36,12 +36,12 @@
     <TextView
         android:id="@+id/descriptionBubble"
         android:layout_width="264dp"
-        android:layout_height="196dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/speech_bubble_background"
         android:backgroundTint="@color/light_blue"
         android:padding="10dp"
         android:paddingStart="20dp"
-        android:text="A microwave is an electronic device typically found in the kitchen that heats up food using microwave radiation. Microwave radiation is an electromagnetic wave that is the right frequency to heat up water found in food, which in turn can heat up the food itself. lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd"
+        android:text="A microwave is an electronic device typically found in the kitchen that heats up food using microwave radiation. Microwave radiation is an electromagnetic wave that is the right frequency to heat up water found in food, which in turn can heat up the food itself. lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd \n\n\n"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="@+id/topicBubble"
         app:layout_constraintStart_toStartOf="@+id/topicBubble"

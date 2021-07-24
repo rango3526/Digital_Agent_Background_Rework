@@ -13,27 +13,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.testapp2.GlobalVars;
 import com.example.testapp2.HelperCode;
-import com.example.testapp2.R;
 import com.example.testapp2.databinding.FragmentHomeBinding;
 import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
-import com.example.testapp2.ui.gallery.GalleryFragment;
+import com.example.testapp2.ui.gallery.LessonListFragment;
 import com.example.testapp2.BuildConfig;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -64,32 +60,8 @@ public class HomeFragment extends Fragment {
 
         context = getActivity();
 
-        FirebaseFirestore.setLoggingEnabled(true);
-        FirebaseFirestore.getInstance().collection("objectLessons").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.w("Firestore stuff", "SUCCESS:" + document.getId() + " => " + document.getData());
-                            }
-                        } else {
-                            Log.w("Firestore stuff", "Error getting documents.", task.getException());
-                        }
-                    }
+//        FirebaseFirestore.setLoggingEnabled(true);
 
-
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("Firestore stuff", "FAILED: " + e.getMessage());
-            }
-        }).addOnCanceledListener(new OnCanceledListener() {
-            @Override
-            public void onCanceled() {
-                Log.w("Firestore stuff", "CANCELED");
-            }
-        });
 //        FirebaseManager.updateFirestoreObjectLessons();
 
 //        binding.beginAnalyzingNewPhotos.setOnClickListener(new View.OnClickListener() {
@@ -103,7 +75,7 @@ public class HomeFragment extends Fragment {
         binding.viewLessons.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, GalleryFragment.class);
+                Intent intent = new Intent(context, LessonListFragment.class);
                 startActivity(intent);
             }
         });
@@ -111,7 +83,7 @@ public class HomeFragment extends Fragment {
         binding.forgetLessons.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GalleryFragment.clearImageHistory(context);
+                LessonListFragment.clearImageHistory(context);
             }
         });
 

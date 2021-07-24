@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,29 +25,30 @@ import com.example.testapp2.HelperCode;
 import com.example.testapp2.LessonListRecyclerViewAdapter;
 import com.example.testapp2.MainActivity;
 import com.example.testapp2.MyImage;
-import com.example.testapp2.R;
-import com.example.testapp2.databinding.FragmentGalleryBinding;
+import com.example.testapp2.ObjectLesson;
+import com.example.testapp2.databinding.FragmentLessonListBinding;
 
 import java.util.ArrayList;
 
-public class GalleryFragment extends Fragment {
+public class LessonListFragment extends Fragment {
 
-    private GalleryViewModel galleryViewModel;
-    private FragmentGalleryBinding binding;
+    private LessonListViewModel galleryViewModel;
+    private FragmentLessonListBinding binding;
 
     RecyclerView recyclerView;
     static SharedPreferences sharedPreferences;
     static boolean onlyBookmarks = false;
     ArrayList<MyImage> myImages = new ArrayList<>();
+    ArrayList<ObjectLesson> objectLessons = new ArrayList<>();
 
     Context context;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         galleryViewModel =
-                new ViewModelProvider(this).get(GalleryViewModel.class);
+                new ViewModelProvider(this).get(LessonListViewModel.class);
 
-        binding = FragmentGalleryBinding.inflate(inflater, container, false);
+        binding = FragmentLessonListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -98,6 +98,7 @@ public class GalleryFragment extends Fragment {
 //        imageUriStrings.clear();
 
         myImages.clear();
+        objectLessons.clear();
 
         ArrayList<MyImage> entireHistory = getImageHistory(context);
 
@@ -106,8 +107,10 @@ public class GalleryFragment extends Fragment {
 //                objectNames.add(mi.objectDetected);
 //                imageUriStrings.add(mi.uriString);
                 myImages.add(mi);
+                objectLessons.add(FirebaseManager.getFirestoreObjectData(mi.objectDetected));
             }
         }
+
     }
 
     public void switchBookmarkFilter(boolean onlyBookmarks) {
@@ -117,9 +120,12 @@ public class GalleryFragment extends Fragment {
 
     void initRecyclerView(Context context, FragmentManager fragmentManager, boolean onlyBookmarks) {
         initArrayList(context, onlyBookmarks);
-        Log.w("Stuff", "initRecyclerView; count: " + myImages.size());
-        LessonListRecyclerViewAdapter adapter = new LessonListRecyclerViewAdapter(myImages, fragmentManager, context);
+//        Log.w("Stuff", "initRecyclerView; count: " + myImages.size());
+        LessonListRecyclerViewAdapter adapter = new LessonListRecyclerViewAdapter(myImages, objectLessons, fragmentManager, context);
         LinearLayoutManager llm = new LinearLayoutManager(context);
+        // TODO: Figure out why this sometimes does not flip it?? Right now consistently doesn't work
+        llm.setStackFromEnd(true);
+        llm.setReverseLayout(true);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(llm);
     }

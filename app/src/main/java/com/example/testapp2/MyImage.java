@@ -4,7 +4,7 @@ import android.net.Uri;
 
 public class MyImage {
     public final String uriString;
-    public final String name;
+    public final String fileName;
     public final int size;
     public final int dateTaken;
     public String objectDetected;
@@ -13,7 +13,7 @@ public class MyImage {
 
     public MyImage(Uri uri, String name, int size, int dateTaken, String objectDetected, long imageID) {
         this.uriString = uri.toString();
-        this.name = name;
+        this.fileName = name;
         this.size = size;
         this.dateTaken = dateTaken;
         this.objectDetected = objectDetected;

@@ -18,6 +18,9 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public class MachineLearningManager {
+
+    // TODO: Take this off the main thread; make asynchronous
+
     public static String AnalyzeImage(Context context, Uri imageUri) {
         String result = "";
         Bitmap originalBitmap = HelperCode.GetBitmapFromUri(context, imageUri);
