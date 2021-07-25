@@ -10,5 +10,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_blue">#BDF6FD</color>
     <color name="light_light_gray">#e3e3e3</color>
+    <color name="middle_gray">#949494</color>
     <color name="lesson_list_border">#FF000000</color>
 </resources>

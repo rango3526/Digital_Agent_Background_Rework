@@ -54,6 +54,7 @@
         android:padding="10dp"
         android:paddingStart="20dp"
         android:text="Learning time"
+        android:textColor="#424242"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/avatarImageView"
