@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
@@ -27,7 +28,6 @@ import java.util.List;
 public class AlarmReceiver extends BroadcastReceiver {
 
 //    List<MyImage> allKnownImages;
-    int latestDate = 0;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -161,39 +161,43 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     public static void alarmTriggered(Context context) {
-        int latestDate = 0;
+        new Thread(new Runnable() { // Executes in working thread so it doesn't block the main/ui thread
+            public void run() {
+                long latestDate = 0;
 
-        // TODO: (Maybe) prevent notifications from covering each other? Right now only one can show at a time, and sequential ones replace previous ones
+                // TODO: (Maybe) prevent notifications from covering each other? Right now only one can show at a time, and sequential ones replace previous ones
 
-        createNotificationChannel(context);
+                createNotificationChannel(context);
 //        Toast.makeText(context, "Checking for new photos...", Toast.LENGTH_SHORT).show();
 
-        List<MyImage> updatedImages = getAllImages(context);
-        List<MyImage> newlyTaken = new ArrayList<>();
+                List<MyImage> updatedImages = getAllImages(context);
+                List<MyImage> newlyTaken = new ArrayList<>();
 
-        SharedPreferences sharedPreferences = HelperCode.getSharedPrefsObj(context);
-        latestDate = sharedPreferences.getInt(GlobalVars.LATEST_DATE_PREF_KEY, (int) System.currentTimeMillis()/1000);
+                SharedPreferences sharedPreferences = HelperCode.getSharedPrefsObj(context);
+                latestDate = sharedPreferences.getLong(GlobalVars.LATEST_DATE_PREF_KEY, System.currentTimeMillis()/1000);
 
-        int newLatestDate = latestDate;
-        int maxNewLatestDate = latestDate;
+                long newLatestDate = latestDate;
+                long maxNewLatestDate = latestDate;
 
-        Log.e("Stuff", "Latest date: " + latestDate);
+                Log.e("Stuff", "Latest date: " + latestDate);
 
-        // TODO: Optimize this by checking from latest to earliest, then stopping when appropriate (they are already sorted by date_taken in getAllImages(), though idk which direction)
-        for (MyImage mi : updatedImages) {
-            if (mi.dateTaken > latestDate) {
-                newLatestDate = mi.dateTaken;
-                if (newLatestDate > maxNewLatestDate)
-                    maxNewLatestDate = newLatestDate;
-                newlyTaken.add(mi);
-                Log.e("Stuff", "Added new image taken at " + mi.dateTaken + " and latest was at: " + latestDate);
+                // TODO: Optimize this by checking from latest to earliest, then stopping when appropriate (they are already sorted by date_taken in getAllImages(), though idk which direction)
+                for (MyImage mi : updatedImages) {
+                    if (mi.dateTaken > latestDate) {
+                        newLatestDate = mi.dateTaken;
+                        if (newLatestDate > maxNewLatestDate)
+                            maxNewLatestDate = newLatestDate;
+                        newlyTaken.add(mi);
+//                        Log.e("Stuff", "Added new image taken at " + mi.dateTaken + " and latest was at: " + latestDate);
+                    }
+                }
+
+                latestDate = maxNewLatestDate;
+                sharedPreferences.edit().putLong(GlobalVars.LATEST_DATE_PREF_KEY, latestDate).apply();
+                analyzeImages(context, newlyTaken);
+
+                FirebaseManager.updateFirestoreObjectLessons();
             }
-        }
-
-        latestDate = maxNewLatestDate;
-        sharedPreferences.edit().putInt(GlobalVars.LATEST_DATE_PREF_KEY, latestDate).apply();
-        analyzeImages(context, newlyTaken);
-
-        FirebaseManager.updateFirestoreObjectLessons();
+        }).start();
     }
 }

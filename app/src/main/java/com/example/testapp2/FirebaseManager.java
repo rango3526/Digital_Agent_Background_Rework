@@ -145,7 +145,7 @@ public class FirebaseManager {
             }
         });
 
-        Log.e("Stuff", "After update Firestore objectLessons");
+//        Log.e("Stuff", "After update Firestore objectLessons");
     }
 
     public static boolean firestoreObjectNameExists(String objectName) {
