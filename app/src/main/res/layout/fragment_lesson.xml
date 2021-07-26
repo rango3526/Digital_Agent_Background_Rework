@@ -8,19 +8,18 @@
 
     <ImageView
         android:id="@+id/objectImage"
-        android:layout_width="385dp"
-        android:layout_height="619dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backToMainButton"
-        app:layout_constraintVertical_bias="0.0"
+        android:layout_marginTop="70dp"
         app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
 
     <ImageView
         android:id="@+id/avatarImageView"
-        android:layout_width="82dp"
+        app:layout_constraintWidth_percent="0.2"
+        android:layout_width="0dp"
         android:layout_height="109dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,9 +44,11 @@
 
     <TextView
         android:id="@+id/avatarBeginLessonDialogue"
-        android:layout_width="308dp"
+        android:layout_width="0dp"
         android:layout_height="154dp"
         android:layout_marginBottom="44dp"
+        android:autoSizeMaxTextSize="16sp"
+        android:autoSizeTextType="uniform"
         android:background="@drawable/speech_bubble_background"
         android:backgroundTint="@color/light_blue"
         android:includeFontPadding="true"
@@ -55,12 +56,13 @@
         android:paddingStart="20dp"
         android:text="Learning time"
         android:textColor="#424242"
-        android:textSize="16sp"
         android:textStyle="bold"
+        android:maxLines="1"
         app:layout_constraintBottom_toBottomOf="@+id/avatarImageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/avatarImageView" />
+        app:layout_constraintStart_toEndOf="@+id/avatarImageView"
+        app:layout_constraintWidth_percent="0.76" />
 
     <TextView
         android:id="@+id/textView2"
@@ -71,7 +73,8 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/avatarBeginLessonDialogue"
         app:layout_constraintEnd_toEndOf="@+id/avatarBeginLessonDialogue"
-        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintHorizontal_bias="0"
+        android:paddingStart="20dp"
         app:layout_constraintStart_toStartOf="@+id/avatarBeginLessonDialogue"
         app:layout_constraintTop_toTopOf="@+id/avatarBeginLessonDialogue"
         app:layout_constraintVertical_bias="0.282" />

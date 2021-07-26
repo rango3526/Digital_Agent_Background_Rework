@@ -36,7 +36,7 @@ public class AvatarSelectAdapter extends RecyclerView.Adapter<AvatarSelectAdapte
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.avatar_list, parent, false);
+                .inflate(R.layout.avatar_list_item, parent, false);
         return new MyViewHolder(itemView);
     }
     @Override

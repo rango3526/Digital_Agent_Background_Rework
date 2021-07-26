@@ -21,21 +21,26 @@
 
     <TextView
         android:id="@+id/videoDialogueBubble"
-        android:layout_width="265dp"
-        android:layout_height="101dp"
+        app:layout_constraintWidth_percent="0.7"
+        android:layout_width="0dp"
+        app:layout_constraintHeight_percent="0.12"
+        android:layout_height="0dp"
         android:background="@drawable/speech_bubble_background"
         android:backgroundTint="@color/light_blue"
         android:padding="10dp"
         android:paddingStart="20dp"
         android:text="Interested in learning more? Let's watch a video together, or bookmark it for later."
         android:textColor="#000000"
+        android:autoSizeMaxTextSize="14dp"
+        android:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="@+id/descriptionBubble"
         app:layout_constraintStart_toStartOf="@+id/descriptionBubble"
         app:layout_constraintTop_toBottomOf="@+id/descriptionBubble" />
 
     <TextView
         android:id="@+id/descriptionBubble"
-        android:layout_width="264dp"
+        app:layout_constraintWidth_percent="0.7"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/speech_bubble_background"
         android:backgroundTint="@color/light_blue"
@@ -43,15 +48,20 @@
         android:paddingStart="20dp"
         android:text="A microwave is an electronic device typically found in the kitchen that heats up food using microwave radiation. Microwave radiation is an electromagnetic wave that is the right frequency to heat up water found in food, which in turn can heat up the food itself. lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd lklakjdlkajdlkajsd \n\n\n"
         android:textColor="#000000"
+        android:autoSizeMaxTextSize="14dp"
+        android:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="@+id/topicBubble"
         app:layout_constraintStart_toStartOf="@+id/topicBubble"
         app:layout_constraintTop_toBottomOf="@+id/topicBubble" />
 
     <TextView
         android:id="@+id/topicBubble"
-        android:layout_width="265dp"
-        android:layout_height="101dp"
-        android:layout_marginTop="120dp"
+        android:layout_width="0dp"
+        app:layout_constraintHeight_percent="0.1"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:autoSizeMaxTextSize="14dp"
+        android:autoSizeTextType="uniform"
         android:background="@drawable/speech_bubble_background"
         android:backgroundTint="@color/light_blue"
         android:padding="10dp"
@@ -59,7 +69,8 @@
         android:text="Let's learn together about XYZ principle."
         android:textColor="#000000"
         app:layout_constraintStart_toEndOf="@+id/avatarImageView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/titleText"
+        app:layout_constraintWidth_percent="0.7" />
 
     <ImageView
         android:id="@+id/avatarImageView"
@@ -75,14 +86,16 @@
 
     <TextView
         android:id="@+id/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:autoSizeMaxTextSize="20sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
         android:text="Stove - Induction"
         android:textColor="#000000"
-        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/backToMainButton"
         app:layout_constraintVertical_bias="0.024" />
