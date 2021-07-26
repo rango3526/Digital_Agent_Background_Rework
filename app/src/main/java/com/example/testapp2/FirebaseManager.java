@@ -12,6 +12,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -19,6 +25,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -29,20 +37,22 @@ public class FirebaseManager {
     static FirebaseStorage storage;
     static StorageReference storageReference;
     static FirebaseFirestore firestoreReference;
+    static FirebaseDatabase realtimeDatabase;
 
     static HashMap<String, HashMap<String, String>> objectLessons = new HashMap<>();
 
-
     public static void initFirebaseManager() {
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
-        firestoreReference = FirebaseFirestore.getInstance();
+        if (!initialized) {
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
+            firestoreReference = FirebaseFirestore.getInstance();
+            realtimeDatabase = FirebaseDatabase.getInstance();
+        }
     }
 
     private static void uploadImage(Uri filePath, Context context, String name)
     {
-        if (!initialized)
-            initFirebaseManager();
+        initFirebaseManager();
 
         if (filePath != null) {
 
@@ -117,8 +127,7 @@ public class FirebaseManager {
     }
 
     public static void updateFirestoreObjectLessons() {
-        if (!initialized)
-            initFirebaseManager();
+        initFirebaseManager();
 
 //        Log.w("Stuff", "Updating Firestore objectLessons...");
 
@@ -162,5 +171,50 @@ public class FirebaseManager {
             Log.e("Firebase stuff", "Hashmap null, internet probably bad");
             return null;
         }
+    }
+
+    public static void populateManagerDTM(String participantID) {
+        initFirebaseManager();
+
+//        firestoreReference.collection("dataTracking").document(participantID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()) {
+//
+//                }
+//                else {
+//                    Log.e("Stuff", "Error getting dataTracking documents");
+//                }
+//            }
+//        });
+
+        DatabaseReference dbRef = realtimeDatabase.getReference("dataTracking").child(participantID);
+
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                Log.e("Stuff", "Data change event");
+                if (!snapshot.exists()) {
+                    DataTrackingModel dtm = new DataTrackingModel();
+                    dtm.setParticipantID(participantID);
+                    dtm.setParticipantName("John Doe");
+                    DataTrackingManager.setDTM(dtm);
+                    return;
+                }
+                DataTrackingModel dtm = snapshot.getValue(DataTrackingModel.class);
+                DataTrackingManager.setDTM(dtm);
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                Log.e("Stuff", "Realtime database access failed");
+            }
+        });
+    }
+
+    public static void uploadDTM(String participantID, DataTrackingModel dtm) {
+        initFirebaseManager();
+
+        realtimeDatabase.getReference("dataTracking").child(participantID).setValue(dtm);
     }
 }
