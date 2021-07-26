@@ -22,14 +22,14 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/imageRecyclerView"
-        android:layout_width="378dp"
-        android:layout_height="598dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backToMainButton"
-        app:layout_constraintVertical_bias="0.661"
+        app:layout_constraintTop_toBottomOf="@+id/bookmarkSwitch"
+        app:layout_constraintVertical_bias="0.025"
+        app:layout_constraintWidth_percent="0.95"
         tools:itemCount="26"
         tools:listitem="@layout/recycler_view_item" />
 
@@ -37,11 +37,10 @@
         android:id="@+id/bookmarkSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="Bookmarked"
-        app:layout_constraintBottom_toBottomOf="@+id/backToMainButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.978"
+        app:layout_constraintHorizontal_bias="0.973"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/backToMainButton"
-        app:layout_constraintVertical_bias="0.476" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
