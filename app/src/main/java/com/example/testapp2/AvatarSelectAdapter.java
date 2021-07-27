@@ -52,6 +52,7 @@ public class AvatarSelectAdapter extends RecyclerView.Adapter<AvatarSelectAdapte
                 Toast.makeText(v.getContext(), "Your avatar has been set", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
                 v.getContext().startActivity(intent);
+                DataTrackingManager.avatarChosen(avatar.getName());
             }
         });
     }

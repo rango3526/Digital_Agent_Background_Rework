@@ -193,7 +193,7 @@ public class FirebaseManager {
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                Log.e("Stuff", "Data change event");
+                Log.e("Stuff", "Data change event; populating DTM...");
                 if (!snapshot.exists()) {
                     DataTrackingModel dtm = new DataTrackingModel();
                     dtm.setParticipantID(participantID);
@@ -212,9 +212,9 @@ public class FirebaseManager {
         });
     }
 
-    public static void uploadDTM(String participantID, DataTrackingModel dtm) {
+    public static void uploadDTM(DataTrackingModel dtm) {
         initFirebaseManager();
 
-        realtimeDatabase.getReference("dataTracking").child(participantID).setValue(dtm);
+        realtimeDatabase.getReference("dataTracking").child(dtm.getParticipantID()).setValue(dtm);
     }
 }

@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.FirebaseManager;
 import com.example.testapp2.MainActivity;
 import com.example.testapp2.MyImage;
@@ -59,6 +60,7 @@ public class LessonFragment extends Fragment {
 
         // ^^^ Default stuff
         context = getActivity();
+        ObjectLesson ol = FirebaseManager.getFirestoreObjectData(mi.objectDetected);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 
@@ -82,7 +84,6 @@ public class LessonFragment extends Fragment {
         binding.learnMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ObjectLesson ol = FirebaseManager.getFirestoreObjectData(mi.objectDetected);
                 if (ol == null) {
                     Toast.makeText(context, "Check your internet connection and try again (restart app)", Toast.LENGTH_SHORT).show();
                     return;
@@ -111,6 +112,9 @@ public class LessonFragment extends Fragment {
         });
 
         binding.avatarImageView.setImageURI(AvatarSelectFragment.getCurAvatar(getActivity()).getImageUri());
+
+        DataTrackingManager.lessonOpened(mi.objectDetected);
+        DataTrackingManager.pageChange("Lesson", -99);
 
         return root;
     }

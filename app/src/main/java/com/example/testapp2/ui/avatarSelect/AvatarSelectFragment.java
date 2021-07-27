@@ -44,12 +44,6 @@ public class AvatarSelectFragment extends Fragment {
         binding = FragmentAvatarSelectBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        avatarSelectViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-
-            }
-        });
         // ^^^ Default code
 
         RecyclerView recyclerView = binding.avatarSelectRecyclerView;

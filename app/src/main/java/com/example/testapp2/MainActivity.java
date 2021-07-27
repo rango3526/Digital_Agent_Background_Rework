@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Custom here
         AvatarSelectFragment.prepareAvatarData(getApplicationContext());
+        DataTrackingManager.startTracking(getApplicationContext());
         // End custom
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -74,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
 //                    Log.e("Stuff", "Now in section: " + destination.getLabel());
                     LessonListFragment.trySetBookmarkFilter(false);
                 }
+
+                DataTrackingManager.pageChange(destination);
             }
         });
 
@@ -88,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             navController.navigate(R.id.nav_avatarSelect);
 
         Intent intent = getIntent();
-        if (intent != null && intent.getStringExtra("objectFound") != null) {
+        if (intent != null && intent.getStringExtra("objectFound") != null) { // This is true if you got here from clicking a notification
 //            Log.e("Stuff", "Should send to lesson now");
             long myImageID = intent.getLongExtra("myImageID", -1);
             if (myImageID == -1) {
@@ -101,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.content_main_layout, lessonFragment, "fragmentTag")
                     .addToBackStack(null)
                     .commit();
+
+            DataTrackingManager.notificationClicked(curImage, FirebaseManager.getFirestoreObjectData(curImage.objectDetected));
         }
 
         FirebaseManager.updateFirestoreObjectLessons();

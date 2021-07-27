@@ -13,9 +13,9 @@ public class DataTrackingModel {
 
     }
 
-    public String participantID = "-1";
-    public String participantName = "Firstname Lastname";
-    public long timeAppFirstStarted = -1;
+    private String participantID = "-1";
+    private String participantName = "Firstname Lastname";
+    private long timeAppFirstStarted = -1;
 
     public String getParticipantID() {
         return participantID;
@@ -90,8 +90,20 @@ public class DataTrackingModel {
         this.notificationClickHistory = notificationClickHistory;
     }
 
-    public void pushToPageHistory(PageEntry pe) {
-        pageHistory.add(pe);
+    public void pushToPageHistory(PageEntry pageEntry) {
+        pageHistory.add(pageEntry);
+    }
+
+    public void pushToAvatarHistory(AvatarEntry avatarEntry) {
+        avatarHistory.add(avatarEntry);
+    }
+
+    public void pushToNotificationClickedHistory(NotificationClickEntry notificationClickEntry) {
+        notificationClickHistory.add(notificationClickEntry);
+    }
+
+    public void pushToLessonHistory(LessonEntry lessonEntry) {
+        lessonHistory.add(lessonEntry);
     }
 
     public static class AvatarEntry {
@@ -99,7 +111,7 @@ public class DataTrackingModel {
         public long millisecondsKept = -1;
         public long entryTime = -1;
     }
-    ArrayList<AvatarEntry> avatarHistory = new ArrayList<>();
+    private ArrayList<AvatarEntry> avatarHistory = new ArrayList<>();
 
     public static class PageEntry {
         public String pageName = "";
@@ -107,11 +119,10 @@ public class DataTrackingModel {
         public long millisecondsOnPage = -1;
         public long entryTime = -1;
     }
-    ArrayList<PageEntry> pageHistory = new ArrayList<>();
+    private ArrayList<PageEntry> pageHistory = new ArrayList<>();
 
     public static class LessonEntry {
-        public String lessonName = "";
-        public String lessonTopic = "";
+        public String objectDetected = "";
         public long sessionID = -1;
         public long millisecondsOnLesson = -1;
         public long entryTime = -1;
@@ -123,23 +134,24 @@ public class DataTrackingModel {
         }
         public ArrayList<BookmarkEntry> bookmarkHistory = new ArrayList<>();
     }
-    ArrayList<LessonEntry> lessonHistory = new ArrayList<>();
+    private ArrayList<LessonEntry> lessonHistory = new ArrayList<>();
 
     public static class StopRefreshEntry {
         public long entryTime = -1;
     }
-    ArrayList<StopRefreshEntry> stopRefreshHistory = new ArrayList<>();
+    private ArrayList<StopRefreshEntry> stopRefreshHistory = new ArrayList<>();
 
     public static class AppUseEntry {
         public long entryTime = -1;
         public long exitTime = -1;
         // TODO: Include something about suspending vs closing out completely
     }
-    ArrayList<AppUseEntry> appUseHistory = new ArrayList<>();
+    private ArrayList<AppUseEntry> appUseHistory = new ArrayList<>();
 
     public static class NotificationClickEntry {
         public long clickTime = -1;
         public long leadsToSessionID = -1;
+        public String objectDetected = "";
     }
-    ArrayList<NotificationClickEntry> notificationClickHistory = new ArrayList<>();
+    private ArrayList<NotificationClickEntry> notificationClickHistory = new ArrayList<>();
 }
