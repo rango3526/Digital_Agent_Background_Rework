@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.FirebaseManager;
 import com.example.testapp2.GlobalVars;
 import com.example.testapp2.HelperCode;
@@ -42,6 +43,7 @@ public class LessonListFragment extends Fragment {
     ArrayList<ObjectLesson> objectLessons = new ArrayList<>();
 
     Context context;
+    long sessionID = -1;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -51,15 +53,11 @@ public class LessonListFragment extends Fragment {
         binding = FragmentLessonListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-
-            }
-        });
-
         // ^^^ Above is default
         context = getActivity();
+        if (sessionID == -1)
+            sessionID = HelperCode.generateSessionID();
+        DataTrackingManager.pageChange(sessionID, "LessonList");
 
         binding.bookmarkSwitch.setChecked(onlyBookmarks);
 
@@ -192,5 +190,9 @@ public class LessonListFragment extends Fragment {
 
     public static void trySetBookmarkFilter(boolean _onlyBookmarks) {
         onlyBookmarks = _onlyBookmarks;
+    }
+
+    public void setSessionID(long _sessionID) {
+        sessionID = _sessionID;
     }
 }

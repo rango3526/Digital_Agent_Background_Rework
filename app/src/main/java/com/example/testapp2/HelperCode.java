@@ -22,10 +22,12 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class HelperCode {
     public static PendingIntent alarmPendingIntent;
     public static AlarmManager alarmManager;
+    public static Random random;
 
     public static Bitmap GetBitmapFromUri(Context context, Uri imageUri) {
         Bitmap bitmap = null;
@@ -77,16 +79,6 @@ public class HelperCode {
         return arrayList;
     }
 
-    public static Intent getIntentForObjectLesson(Context context, MyImage mi) {
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("objectFound", mi.objectDetected);
-        intent.putExtra("imageUri", mi.uriString);
-        intent.putExtra("myImageID", mi.imageID);
-
-        return intent;
-    }
-
     public static String capitalizeFirstLetter(String text) {
         return text.substring(0, 1).toUpperCase() + text.substring(1);
     }
@@ -127,5 +119,11 @@ public class HelperCode {
 
     public static void setAvatarNamePref(Context context, String name) {
         getSharedPrefsObj(context).edit().putString(GlobalVars.AVATAR_NAME_PREF_KEY, name).apply();
+    }
+
+    public static long generateSessionID() {
+        if (random == null)
+            random = new Random(System.currentTimeMillis());
+        return random.nextLong();
     }
 }

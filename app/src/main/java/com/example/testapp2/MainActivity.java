@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDestinationChanged(@NonNull @NotNull NavController controller, @NonNull @NotNull NavDestination destination, @Nullable @org.jetbrains.annotations.Nullable Bundle arguments) {
 //                Log.w("Stuff", "Controller: " + controller.toString() + ", destination: " + destination.getLabel());
+
                 if (destination.getLabel().equals(getResources().getString(R.string.menu_gallery_bookmarked))) {
 //                    Log.e("Stuff", "Now in bookmark section");
                     LessonListFragment.trySetBookmarkFilter(true);
@@ -75,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
 //                    Log.e("Stuff", "Now in section: " + destination.getLabel());
                     LessonListFragment.trySetBookmarkFilter(false);
                 }
-
-                DataTrackingManager.pageChange(destination);
             }
         });
 
@@ -94,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         if (intent != null && intent.getStringExtra("objectFound") != null) { // This is true if you got here from clicking a notification
 //            Log.e("Stuff", "Should send to lesson now");
             long myImageID = intent.getLongExtra("myImageID", -1);
+            long sessionID = intent.getLongExtra("sessionID", -1);
             if (myImageID == -1) {
                 throw new RuntimeException("Did not find proper image ID in notification intent");
             }
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     .addToBackStack(null)
                     .commit();
 
-            DataTrackingManager.notificationClicked(curImage, FirebaseManager.getFirestoreObjectData(curImage.objectDetected));
+            DataTrackingManager.notificationClicked(sessionID, curImage, FirebaseManager.getFirestoreObjectData(curImage.objectDetected));
         }
 
         FirebaseManager.updateFirestoreObjectLessons();
@@ -125,5 +125,13 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-
+    // TODO: this; need to find this class implementation online: https://stackoverflow.com/questions/5593115/run-code-when-android-app-is-closed-sent-to-background
+//    @Override
+//    public void onAppForegroundStateChange(AppForegroundStateManager.AppForegroundState newState) {
+//        if (AppForegroundStateManager.AppForegroundState.IN_FOREGROUND == newState) {
+//            // App just entered the foreground. Do something here!
+//        } else {
+//            // App just entered the background. Do something here!
+//        }
+//    }
 }

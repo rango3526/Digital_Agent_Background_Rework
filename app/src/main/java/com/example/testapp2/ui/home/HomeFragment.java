@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.GlobalVars;
 import com.example.testapp2.HelperCode;
 import com.example.testapp2.databinding.FragmentHomeBinding;
@@ -40,6 +41,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
 
     Context context;
+    long sessionID = -1;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +54,9 @@ public class HomeFragment extends Fragment {
         // ^^^ Above is the default code
 
         context = getActivity();
+        if (sessionID == -1)
+            sessionID = HelperCode.generateSessionID();
+        DataTrackingManager.pageChange(sessionID, "Home");
 
 //        FirebaseFirestore.setLoggingEnabled(true);
 
@@ -76,6 +81,7 @@ public class HomeFragment extends Fragment {
         binding.forgetLessons.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DataTrackingManager.forgetLessonsClicked(sessionID);
                 LessonListFragment.clearImageHistory(context);
             }
         });
@@ -83,6 +89,7 @@ public class HomeFragment extends Fragment {
         binding.stopAnalyzing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DataTrackingManager.stopRefreshClicked(sessionID);
                 HelperCode.cancelAlarm(context);
             }
         });
@@ -91,21 +98,22 @@ public class HomeFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
             askForExternalStoragePermission();
         }
+        else {
+            if (context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
 
-        if (context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+                // Should we show an explanation?
+                if (shouldShowRequestPermissionRationale(
+                        Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    // Explain to the user why we need to read the contacts
+                }
 
-            // Should we show an explanation?
-            if (shouldShowRequestPermissionRationale(
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Explain to the user why we need to read the contacts
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        GlobalVars.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+                // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
+                // app-defined int constant that should be quite unique
             }
-
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    GlobalVars.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-
-            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
-            // app-defined int constant that should be quite unique
         }
 
         // Begin searching for photos

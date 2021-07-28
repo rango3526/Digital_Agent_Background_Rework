@@ -57,7 +57,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private static void sendNotification(Context context, MyImage mi) {
-        Intent intent = HelperCode.getIntentForObjectLesson(context, mi);
+        Intent intent = AlarmReceiver.getIntentForObjectLesson(HelperCode.generateSessionID(), context, mi);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, GlobalVars.NOTIF_CHANNEL_ID)
@@ -199,5 +199,16 @@ public class AlarmReceiver extends BroadcastReceiver {
                 FirebaseManager.updateFirestoreObjectLessons();
             }
         }).start();
+    }
+
+    public static Intent getIntentForObjectLesson(long sessionID, Context context, MyImage mi) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("objectFound", mi.objectDetected);
+        intent.putExtra("imageUri", mi.uriString);
+        intent.putExtra("myImageID", mi.imageID);
+        intent.putExtra("sessionID", sessionID);
+
+        return intent;
     }
 }

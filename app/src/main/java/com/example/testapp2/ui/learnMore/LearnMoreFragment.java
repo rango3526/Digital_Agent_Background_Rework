@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.testapp2.DataTrackingManager;
+import com.example.testapp2.HelperCode;
 import com.example.testapp2.MainActivity;
 import com.example.testapp2.MyImage;
 import com.example.testapp2.ObjectLesson;
@@ -29,6 +31,7 @@ public class LearnMoreFragment extends Fragment {
     private FragmentLearnMoreBinding binding;
 
     Context context;
+    long sessionID = -1;
 
     ObjectLesson ol;
     MyImage mi;
@@ -50,6 +53,9 @@ public class LearnMoreFragment extends Fragment {
         // ^^^ Default code
 
         context = getActivity();
+        if (sessionID == -1)
+            sessionID = HelperCode.generateSessionID();
+        DataTrackingManager.pageChange(sessionID, "LearnMore");
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 
@@ -100,5 +106,9 @@ public class LearnMoreFragment extends Fragment {
     public void setData(ObjectLesson _ol, MyImage _mi) {
         ol = _ol;
         mi = _mi;
+    }
+
+    public void setSessionID(long _sessionID) {
+        sessionID = _sessionID;
     }
 }

@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.testapp2.AvatarModel;
 import com.example.testapp2.AvatarSelectAdapter;
+import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.GlobalVars;
 import com.example.testapp2.HelperCode;
 import com.example.testapp2.R;
@@ -36,6 +37,8 @@ public class AvatarSelectFragment extends Fragment {
     private AvatarSelectViewModel avatarSelectViewModel;
     private FragmentAvatarSelectBinding binding;
 
+    long sessionID = -1;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         avatarSelectViewModel =
@@ -45,6 +48,10 @@ public class AvatarSelectFragment extends Fragment {
         View root = binding.getRoot();
 
         // ^^^ Default code
+
+        if (sessionID == -1)
+            sessionID = HelperCode.generateSessionID();
+        DataTrackingManager.pageChange(sessionID, "AvatarSelect");
 
         RecyclerView recyclerView = binding.avatarSelectRecyclerView;
         mAdapter = new AvatarSelectAdapter(avatarList);
@@ -112,5 +119,9 @@ public class AvatarSelectFragment extends Fragment {
 
     public static void setCurAvatar(Context context, String name) {
         HelperCode.setAvatarNamePref(context, name);
+    }
+
+    public void setSessionID(long _sessionID) {
+        sessionID = _sessionID;
     }
 }

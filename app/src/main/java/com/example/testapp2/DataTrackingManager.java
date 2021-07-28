@@ -32,22 +32,18 @@ public class DataTrackingManager {
         FirebaseManager.uploadDTM(dtm);
     }
 
-    public static void pageChange(NavDestination dest) {
-        pageChange(System.currentTimeMillis(), -1, dest.getLabel().toString(), -99);
+    public static void pageChange(long sessionID, String pageName) {
+        pageChange(sessionID, System.currentTimeMillis(), -1, pageName);
     }
 
-    public static void pageChange(String pageName, long sessionID) {
-        pageChange(System.currentTimeMillis(), -1, pageName, sessionID);
-    }
-
-    public static void pageChange(long entryTime, long millisecondsOnPage, String pageName, long sessionID) {
+    public static void pageChange(long sessionID, long entryTime, long millisecondsOnPage, String pageName) {
         if (dtm == null) { // If the dtm hasn't been created (so the system hasn't had time to connect to firebase yet), it will just keep waiting until it does
             Log.e("Stuff", "Waiting 1 second and trying again");
             new java.util.Timer().schedule(
                     new java.util.TimerTask() {
                         @Override
                         public void run() {
-                            pageChange(entryTime, millisecondsOnPage, pageName, sessionID);
+                            pageChange(sessionID, entryTime, millisecondsOnPage, pageName);
                         }
                     },
                     1000
@@ -88,12 +84,24 @@ public class DataTrackingManager {
         dtmChanged();
     }
 
-    public static void lessonBookmarked(/*lesson info*/) {
+    public static void lessonBookmarked(long sessionID, boolean isNowBookmarked) { // TODO: actually call this function, requires rework of the way Lessons get assigned sessionIDs
+        DataTrackingModel.LessonEntry.BookmarkEntry bookmarkEntry = new DataTrackingModel.LessonEntry.BookmarkEntry();
+        bookmarkEntry.entryTime = System.currentTimeMillis();
+        bookmarkEntry.isNowBookmarked = isNowBookmarked;
+
+        // TODO: this is inefficient, but fixing this means reorganizing the entire database structure. Not much data, so probably not worth it.
+        ArrayList<DataTrackingModel.LessonEntry> lessonHistory = dtm.getLessonHistory();
+        for (DataTrackingModel.LessonEntry lessonEntry : lessonHistory) {
+            if (lessonEntry.sessionID == sessionID) {
+                lessonEntry.bookmarkHistory.add(bookmarkEntry);
+                break;
+            }
+        }
 
         dtmChanged();
     }
 
-    public static void lessonOpened(String objectDetected) {
+    public static void lessonOpened(long sessionID, String objectDetected) {
         if (dtm.getLessonHistory().size() > 0) { // Since prev is ending, set its duration in tracking data
             int index = dtm.getLessonHistory().size()-1;
             DataTrackingModel.LessonEntry lessonEntry = dtm.getLessonHistory().get(index);
@@ -103,14 +111,14 @@ public class DataTrackingManager {
         lessonEntry.bookmarkHistory = new ArrayList<>();
         lessonEntry.entryTime = System.currentTimeMillis();
         lessonEntry.objectDetected = objectDetected;
-        lessonEntry.sessionID = -99;
+        lessonEntry.sessionID = sessionID;
         lessonEntry.millisecondsOnLesson = -1;
         dtm.pushToLessonHistory(lessonEntry);
 
         dtmChanged();
     }
 
-    public static void notificationClicked(MyImage myImage, ObjectLesson objectLesson) {
+    public static void notificationClicked(long sessionID, MyImage myImage, ObjectLesson objectLesson) {
         DataTrackingModel.NotificationClickEntry notificationClickEntry = new DataTrackingModel.NotificationClickEntry();
         notificationClickEntry.clickTime = System.currentTimeMillis();
         notificationClickEntry.leadsToSessionID = -99;
@@ -135,13 +143,26 @@ public class DataTrackingManager {
         dtmChanged();
     }
 
-    public static void stopRefreshClicked() {
+    public static void stopRefreshClicked(long sessionID) {
+        DataTrackingModel.StopRefreshEntry stopRefreshEntry = new DataTrackingModel.StopRefreshEntry();
+        stopRefreshEntry.entryTime = System.currentTimeMillis();
+        stopRefreshEntry.sessionID = sessionID;
+        dtm.pushToStopRefreshEntryHistory(stopRefreshEntry);
 
         dtmChanged();
     }
 
     public static void setDTM(DataTrackingModel _dtm) {
         dtm = _dtm;
+        dtmChanged();
+    }
+
+    public static void forgetLessonsClicked(long sessionID) {
+        DataTrackingModel.ForgetLessonsEntry forgetLessonsEntry = new DataTrackingModel.ForgetLessonsEntry();
+        forgetLessonsEntry.entryTime = System.currentTimeMillis();
+        forgetLessonsEntry.sessionID = sessionID;
+        dtm.pushToForgetLessonsHistory(forgetLessonsEntry);
+
         dtmChanged();
     }
 }

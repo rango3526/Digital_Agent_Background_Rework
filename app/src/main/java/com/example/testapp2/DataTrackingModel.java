@@ -106,6 +106,14 @@ public class DataTrackingModel {
         lessonHistory.add(lessonEntry);
     }
 
+    public void pushToStopRefreshEntryHistory(StopRefreshEntry stopRefreshEntry) {
+        stopRefreshHistory.add(stopRefreshEntry);
+    }
+
+    public void pushToForgetLessonsHistory(ForgetLessonsEntry forgetLessonsEntry) {
+        forgetLessonsHistory.add(forgetLessonsEntry);
+    }
+
     public static class AvatarEntry {
         public String avatarName = "";
         public long millisecondsKept = -1;
@@ -128,8 +136,7 @@ public class DataTrackingModel {
         public long entryTime = -1;
 
         public static class BookmarkEntry {
-            public boolean bookmarked = false;
-            public long millisecondsKept = -1;
+            public boolean isNowBookmarked = false;
             public long entryTime = -1;
         }
         public ArrayList<BookmarkEntry> bookmarkHistory = new ArrayList<>();
@@ -138,8 +145,15 @@ public class DataTrackingModel {
 
     public static class StopRefreshEntry {
         public long entryTime = -1;
+        public long sessionID = -1;
     }
     private ArrayList<StopRefreshEntry> stopRefreshHistory = new ArrayList<>();
+
+    public static class ForgetLessonsEntry {
+        public long entryTime = -1;
+        public long sessionID = -1;
+    }
+    private ArrayList<ForgetLessonsEntry> forgetLessonsHistory = new ArrayList<>();
 
     public static class AppUseEntry {
         public long entryTime = -1;

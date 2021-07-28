@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.FirebaseManager;
+import com.example.testapp2.HelperCode;
 import com.example.testapp2.MainActivity;
 import com.example.testapp2.MyImage;
 import com.example.testapp2.ObjectLesson;
@@ -32,6 +34,8 @@ import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
 import com.example.testapp2.ui.gallery.LessonListFragment;
 import com.example.testapp2.ui.learnMore.LearnMoreFragment;
 
+import java.util.Random;
+
 public class LessonFragment extends Fragment {
 
     private LessonViewModel slideshowViewModel;
@@ -40,6 +44,7 @@ public class LessonFragment extends Fragment {
     FragmentManager fragmentManager;
 
     private MyImage mi;
+    long sessionID = -1;
 
     Context context;
 
@@ -61,6 +66,9 @@ public class LessonFragment extends Fragment {
         // ^^^ Default stuff
         context = getActivity();
         ObjectLesson ol = FirebaseManager.getFirestoreObjectData(mi.objectDetected);
+        if (sessionID == -1)
+            sessionID = HelperCode.generateSessionID();
+        DataTrackingManager.pageChange(sessionID, "Lesson");
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 
@@ -113,8 +121,8 @@ public class LessonFragment extends Fragment {
 
         binding.avatarImageView.setImageURI(AvatarSelectFragment.getCurAvatar(getActivity()).getImageUri());
 
-        DataTrackingManager.lessonOpened(mi.objectDetected);
-        DataTrackingManager.pageChange("Lesson", -99);
+        DataTrackingManager.lessonOpened(sessionID, mi.objectDetected);
+        DataTrackingManager.pageChange(sessionID, "Lesson");
 
         return root;
     }
@@ -128,5 +136,9 @@ public class LessonFragment extends Fragment {
     public void setLessonData(MyImage _mi) {
         context = getActivity();
         mi = _mi;
+    }
+
+    public void setSessionID(long _sessionID) {
+        sessionID = _sessionID;
     }
 }
