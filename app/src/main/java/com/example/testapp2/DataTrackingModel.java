@@ -168,4 +168,12 @@ public class DataTrackingModel {
         public String objectDetected = "";
     }
     private ArrayList<NotificationClickEntry> notificationClickHistory = new ArrayList<>();
+
+    public ArrayList<ForgetLessonsEntry> getForgetLessonsHistory() {
+        return forgetLessonsHistory;
+    }
+
+    public void setForgetLessonsHistory(ArrayList<ForgetLessonsEntry> forgetLessonsHistory) {
+        this.forgetLessonsHistory = forgetLessonsHistory;
+    }
 }

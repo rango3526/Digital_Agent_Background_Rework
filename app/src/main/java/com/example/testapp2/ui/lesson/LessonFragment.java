@@ -67,7 +67,7 @@ public class LessonFragment extends Fragment {
         context = getActivity();
         ObjectLesson ol = FirebaseManager.getFirestoreObjectData(mi.objectDetected);
         if (sessionID == -1)
-            sessionID = HelperCode.generateSessionID();
+            Log.e("Stuff", "This lesson needs a sessionID");
         DataTrackingManager.pageChange(sessionID, "Lesson");
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
@@ -116,6 +116,8 @@ public class LessonFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 LessonListFragment.setImageBookmark(context, mi.imageID, isChecked);
+                DataTrackingManager.lessonBookmarked(mi.sessionID, isChecked);
+                mi.bookmarked = isChecked;
             }
         });
 
@@ -136,9 +138,10 @@ public class LessonFragment extends Fragment {
     public void setLessonData(MyImage _mi) {
         context = getActivity();
         mi = _mi;
+        sessionID = mi.sessionID;
     }
 
-    public void setSessionID(long _sessionID) {
-        sessionID = _sessionID;
-    }
+//    public void setSessionID(long _sessionID) {
+//        sessionID = _sessionID;
+//    }
 }

@@ -12,6 +12,8 @@ public class DataTrackingManager {
 
     private static DataTrackingModel dtm;
     private static boolean currentlyTracking = true;
+    // Uploading DTM is locked until it has synced with the Firebase
+    private static boolean uploadLocked = true;
 
     public static void startTracking(Context context) {
         String participantID = HelperCode.getSharedPrefsObj(context).getString(GlobalVars.PARTICIPANT_ID_PREF_KEY, "");
@@ -29,7 +31,8 @@ public class DataTrackingManager {
     }
 
     public static void dtmChanged() {
-        FirebaseManager.uploadDTM(dtm);
+        if (!uploadLocked)
+            FirebaseManager.uploadDTM(dtm);
     }
 
     public static void pageChange(long sessionID, String pageName) {
@@ -157,6 +160,10 @@ public class DataTrackingManager {
         dtmChanged();
     }
 
+    public static DataTrackingModel getDTM() {
+        return dtm;
+    }
+
     public static void forgetLessonsClicked(long sessionID) {
         DataTrackingModel.ForgetLessonsEntry forgetLessonsEntry = new DataTrackingModel.ForgetLessonsEntry();
         forgetLessonsEntry.entryTime = System.currentTimeMillis();
@@ -164,5 +171,29 @@ public class DataTrackingManager {
         dtm.pushToForgetLessonsHistory(forgetLessonsEntry);
 
         dtmChanged();
+    }
+
+    public static DataTrackingModel mergeDtms(DataTrackingModel dtm1, DataTrackingModel dtm2) {
+        Log.e("Stuff", "DTMs merging...");
+
+        DataTrackingModel earliestDtm = dtm2;
+        DataTrackingModel latestDtm = dtm1;
+        if (dtm1.getTimeAppFirstStarted() < dtm2.getTimeAppFirstStarted()) { // prefer the base data in the earliest version
+            earliestDtm = dtm1;
+            latestDtm = dtm2;
+        }
+
+        earliestDtm.getAvatarHistory().addAll(latestDtm.getAvatarHistory());
+        earliestDtm.getLessonHistory().addAll(latestDtm.getLessonHistory());
+        earliestDtm.getForgetLessonsHistory().addAll(latestDtm.getForgetLessonsHistory());
+        earliestDtm.getNotificationClickHistory().addAll(latestDtm.getNotificationClickHistory());
+        earliestDtm.getPageHistory().addAll(latestDtm.getPageHistory());
+        earliestDtm.getAppUseHistory().addAll(latestDtm.getAppUseHistory());
+
+        return earliestDtm;
+    }
+
+    public static void unlockUpload() {
+        uploadLocked = false;
     }
 }

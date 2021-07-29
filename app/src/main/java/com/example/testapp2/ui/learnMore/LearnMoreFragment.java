@@ -89,6 +89,8 @@ public class LearnMoreFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 LessonListFragment.setImageBookmark(context, mi.imageID, isChecked);
+                DataTrackingManager.lessonBookmarked(mi.sessionID, isChecked);
+                mi.bookmarked = true;
             }
         });
 

@@ -145,13 +145,17 @@ public class LessonListFragment extends Fragment {
             sharedPreferences = HelperCode.getSharedPrefsObj(context);
         }
 
+        boolean found = false;
         ArrayList<MyImage> entireHistory = getImageHistory(context);
         for (MyImage mi : entireHistory) {
             if (mi.imageID == imageID) {
                 mi.bookmarked = bookmarked;
+                found = true;
                 break;
             }
         }
+        if (!found)
+            Log.e("Stuff", "No image found to bookmark with that ID!");
 
         sharedPreferences.edit().putString(GlobalVars.IMAGE_HISTORY_PREF_KEY, HelperCode.arrayListToJson(entireHistory)).apply();
     }

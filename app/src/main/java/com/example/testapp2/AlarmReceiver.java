@@ -132,7 +132,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 // Stores column values and the contentUri in a local object
                 // that represents the media file.
                 if (!idTable.containsKey(id)) {
-                    imageList.add(new MyImage(contentUri, name, size, dateTaken, "", id));
+                    imageList.add(new MyImage(contentUri, name, size, dateTaken, "", id, HelperCode.generateSessionID()));
                     idTable.put(id, 1);
                 }
 //                Log.w("MyImage Stuff", contentUri.toString() + " " + name + " " + size + " " + dateTaken);

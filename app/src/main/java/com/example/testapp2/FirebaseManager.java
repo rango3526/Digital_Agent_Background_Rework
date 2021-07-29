@@ -47,6 +47,7 @@ public class FirebaseManager {
             storageReference = storage.getReference();
             firestoreReference = FirebaseFirestore.getInstance();
             realtimeDatabase = FirebaseDatabase.getInstance();
+            initialized = true;
         }
     }
 
@@ -176,40 +177,60 @@ public class FirebaseManager {
     public static void populateManagerDTM(String participantID) {
         initFirebaseManager();
 
-//        firestoreReference.collection("dataTracking").document(participantID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        // This will be overwritten/merged when the below code runs (asynchronously)
+        // If the code below finds no previous DTM stored in Firebase, then this is the default and will be kept as-is
+        DataTrackingModel dtm = new DataTrackingModel();
+        dtm.setParticipantID(participantID);
+        dtm.setParticipantName("Firstname Lastname");
+        dtm.setTimeAppFirstStarted(System.currentTimeMillis());
+        DataTrackingManager.setDTM(dtm);
+
+        DatabaseReference dbRef = realtimeDatabase.getReference("dataTracking").child(participantID);
+        dbRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DataSnapshot snapshot = task.getResult();
+                    Log.e("Stuff", "Data change event; populating DTM...");
+                    if (!snapshot.exists()) {
+                        Log.e("Stuff", "No records on firebase, so default DTM will be used");
+                        DataTrackingManager.unlockUpload();
+                        DataTrackingManager.dtmChanged();
+                        return;
+                    }
+                    DataTrackingModel onlineDtm = snapshot.getValue(DataTrackingModel.class);
+                    // Merges the offline version with the online version, once online is retrieved
+                    DataTrackingManager.unlockUpload();
+                    // TODO: Fix merge! For some reason it deletes all previous history when merging!
+                    DataTrackingManager.setDTM(DataTrackingManager.mergeDtms(onlineDtm, DataTrackingManager.getDTM()));
+                }
+                else {
+                    Log.e("Stuff", "Realtime database access failed; trying again");
+                    populateManagerDTM(participantID);
+                }
+            }
+        });
+
+//        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
 //            @Override
-//            public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
+//            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//                Log.e("Stuff", "Data change event; populating DTM...");
+//                if (!snapshot.exists()) {
+//                    return;
+//                }
+//                DataTrackingModel dtm = snapshot.getValue(DataTrackingModel.class);
+//                // Merges the offline version with the online version, once online is retrieved
+//                DataTrackingManager.unlockUpload();
+//                DataTrackingManager.setDTM(DataTrackingManager.mergeDtms(dtm, DataTrackingManager.getDTM()));
+//            }
 //
-//                }
-//                else {
-//                    Log.e("Stuff", "Error getting dataTracking documents");
-//                }
+//            @Override
+//            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//                Log.e("Stuff", "Realtime database access failed; trying again");
+//                populateManagerDTM(participantID);
 //            }
 //        });
 
-        DatabaseReference dbRef = realtimeDatabase.getReference("dataTracking").child(participantID);
-
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                Log.e("Stuff", "Data change event; populating DTM...");
-                if (!snapshot.exists()) {
-                    DataTrackingModel dtm = new DataTrackingModel();
-                    dtm.setParticipantID(participantID);
-                    dtm.setParticipantName("John Doe");
-                    DataTrackingManager.setDTM(dtm);
-                    return;
-                }
-                DataTrackingModel dtm = snapshot.getValue(DataTrackingModel.class);
-                DataTrackingManager.setDTM(dtm);
-            }
-
-            @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                Log.e("Stuff", "Realtime database access failed");
-            }
-        });
     }
 
     public static void uploadDTM(DataTrackingModel dtm) {

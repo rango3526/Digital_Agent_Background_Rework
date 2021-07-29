@@ -105,7 +105,10 @@ public class MainActivity extends AppCompatActivity {
                     .addToBackStack(null)
                     .commit();
 
-            DataTrackingManager.notificationClicked(sessionID, curImage, FirebaseManager.getFirestoreObjectData(curImage.objectDetected));
+            // TODO: Fix; this line causes a crash (apparently DataTrackingManager is null???)
+            // Okay it's because the DTM hasn't loaded yet; it's too quick
+            // TODO: Need to make app work offline -- Fixed? At least for DTM stuff maybe
+//            DataTrackingManager.notificationClicked(sessionID, curImage, FirebaseManager.getFirestoreObjectData(curImage.objectDetected));
         }
 
         FirebaseManager.updateFirestoreObjectLessons();
