@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="com.example.testapp2.ui.slideshow.SlideshowFragment"
+        android:name="com.example.testapp2.ui.signIn.SignInFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
 
@@ -46,4 +46,10 @@
         android:name="com.example.testapp2.ui.avatarSelect.AvatarSelectFragment"
         android:label="@string/menu_avatarSelect"
         tools:layout="@layout/fragment_avatar_select" />
+
+    <fragment
+        android:id="@+id/nav_signIn"
+        android:name="com.example.testapp2.ui.signIn.SignInFragment"
+        android:label="@string/menu_signIn"
+        tools:layout="@layout/fragment_sign_in" />
 </navigation>

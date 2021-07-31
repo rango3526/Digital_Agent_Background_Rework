@@ -38,7 +38,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Custom here
         AvatarSelectFragment.prepareAvatarData(getApplicationContext());
-        DataTrackingManager.startTracking(getApplicationContext());
+
+        String participantID = HelperCode.getSharedPrefsObj(getApplicationContext()).getString(GlobalVars.PARTICIPANT_ID_PREF_KEY, "");
+        if (participantID.equals("")) {
+            Intent prevIntent = getIntent();
+            participantID = prevIntent.getStringExtra("participantID");
+            if (participantID != null) {
+                DataTrackingManager.startTracking(getApplicationContext(), participantID);
+            }
+        }
+        else {
+            DataTrackingManager.startTracking(getApplicationContext(), participantID);
+        }
+
+
         // End custom
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -85,8 +98,11 @@ public class MainActivity extends AppCompatActivity {
 
         // ^^^ Above is the default code
 
+        // if ID hasn't been chosen yet, chose it now
+        if (!HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.PARTICIPANT_ID_PREF_KEY))
+            navController.navigate(R.id.nav_signIn);
         // if avatar hasn't been chosen yet, chose it now
-        if (!HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.AVATAR_NAME_PREF_KEY))
+        else if (!HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.AVATAR_NAME_PREF_KEY))
             navController.navigate(R.id.nav_avatarSelect);
 
         Intent intent = getIntent();

@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.function.Function;
 
 public class HelperCode {
     public static PendingIntent alarmPendingIntent;
@@ -125,5 +126,9 @@ public class HelperCode {
         if (random == null)
             random = new Random(System.currentTimeMillis());
         return random.nextLong();
+    }
+
+    public static void callInSeconds(Runnable f, double seconds) {
+
     }
 }

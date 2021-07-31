@@ -14,4 +14,5 @@
     <string name="menu_lesson">Lesson</string>
     <string name="menu_learnMore">Learn More</string>
     <string name="menu_avatarSelect">Choose an Avatar</string>
+    <string name="menu_signIn">Set Your ID</string>
 </resources>

@@ -3,10 +3,7 @@ package com.example.testapp2;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.navigation.NavDestination;
-
 import java.util.ArrayList;
-import java.util.Random;
 
 public class DataTrackingManager {
 
@@ -15,13 +12,11 @@ public class DataTrackingManager {
     // Uploading DTM is locked until it has synced with the Firebase
     private static boolean uploadLocked = true;
 
-    public static void startTracking(Context context) {
-        String participantID = HelperCode.getSharedPrefsObj(context).getString(GlobalVars.PARTICIPANT_ID_PREF_KEY, "");
-        if (participantID.equals("")) {
-            participantID = Long.toString(new Random(System.currentTimeMillis()).nextLong());
-            HelperCode.getSharedPrefsObj(context).edit().putString(GlobalVars.PARTICIPANT_ID_PREF_KEY, participantID).apply();
-        }
+    private static Context context;
 
+    public static void startTracking(Context _context, String participantID) {
+        context = _context;
+        HelperCode.getSharedPrefsObj(context).edit().putString(GlobalVars.PARTICIPANT_ID_PREF_KEY, participantID).apply();
         FirebaseManager.populateManagerDTM(participantID);
         currentlyTracking = true;
     }
@@ -36,21 +31,30 @@ public class DataTrackingManager {
     }
 
     public static void pageChange(long sessionID, String pageName) {
+        if (!currentlyTracking)
+            return;
+
         pageChange(sessionID, System.currentTimeMillis(), -1, pageName);
     }
 
     public static void pageChange(long sessionID, long entryTime, long millisecondsOnPage, String pageName) {
+        if (!currentlyTracking)
+            return;
+
         if (dtm == null) { // If the dtm hasn't been created (so the system hasn't had time to connect to firebase yet), it will just keep waiting until it does
             Log.e("Stuff", "Waiting 1 second and trying again");
-            new java.util.Timer().schedule(
-                    new java.util.TimerTask() {
-                        @Override
-                        public void run() {
-                            pageChange(sessionID, entryTime, millisecondsOnPage, pageName);
-                        }
-                    },
-                    1000
-            );
+
+            HelperCode.callInSeconds(() -> pageChange(sessionID, entryTime, millisecondsOnPage, pageName), 1);
+
+//            new java.util.Timer().schedule(
+//                    new java.util.TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            pageChange(sessionID, entryTime, millisecondsOnPage, pageName);
+//                        }
+//                    },
+//                    1000
+//            );
             return;
         }
         Log.e("Stuff", "Page change info being added to DTM");
@@ -72,6 +76,9 @@ public class DataTrackingManager {
     }
 
     public static void avatarChosen(String avatarName) {
+        if (!currentlyTracking)
+            return;
+
         if (dtm.getAvatarHistory().size() > 0) { // Since prev is ending, set its duration in tracking data
             int index = dtm.getPageHistory().size()-1;
             DataTrackingModel.AvatarEntry prevAvatarEntry = dtm.getAvatarHistory().get(index);
@@ -88,6 +95,9 @@ public class DataTrackingManager {
     }
 
     public static void lessonBookmarked(long sessionID, boolean isNowBookmarked) { // TODO: actually call this function, requires rework of the way Lessons get assigned sessionIDs
+        if (!currentlyTracking)
+            return;
+
         DataTrackingModel.LessonEntry.BookmarkEntry bookmarkEntry = new DataTrackingModel.LessonEntry.BookmarkEntry();
         bookmarkEntry.entryTime = System.currentTimeMillis();
         bookmarkEntry.isNowBookmarked = isNowBookmarked;
@@ -105,6 +115,9 @@ public class DataTrackingManager {
     }
 
     public static void lessonOpened(long sessionID, String objectDetected) {
+        if (!currentlyTracking)
+            return;
+
         if (dtm.getLessonHistory().size() > 0) { // Since prev is ending, set its duration in tracking data
             int index = dtm.getLessonHistory().size()-1;
             DataTrackingModel.LessonEntry lessonEntry = dtm.getLessonHistory().get(index);
@@ -122,6 +135,9 @@ public class DataTrackingManager {
     }
 
     public static void notificationClicked(long sessionID, MyImage myImage, ObjectLesson objectLesson) {
+        if (!currentlyTracking)
+            return;
+
         DataTrackingModel.NotificationClickEntry notificationClickEntry = new DataTrackingModel.NotificationClickEntry();
         notificationClickEntry.clickTime = System.currentTimeMillis();
         notificationClickEntry.leadsToSessionID = -99;
@@ -132,21 +148,30 @@ public class DataTrackingManager {
     }
 
     public static void appOpened() {
+        if (!currentlyTracking)
+            return;
 
         dtmChanged();
     }
 
     public static void appClosing() {
+        if (!currentlyTracking)
+            return;
 
         dtmChanged();
     }
 
     public static void appSuspending() {
+        if (!currentlyTracking)
+            return;
 
         dtmChanged();
     }
 
     public static void stopRefreshClicked(long sessionID) {
+        if (!currentlyTracking)
+            return;
+
         DataTrackingModel.StopRefreshEntry stopRefreshEntry = new DataTrackingModel.StopRefreshEntry();
         stopRefreshEntry.entryTime = System.currentTimeMillis();
         stopRefreshEntry.sessionID = sessionID;
@@ -165,6 +190,9 @@ public class DataTrackingManager {
     }
 
     public static void forgetLessonsClicked(long sessionID) {
+        if (!currentlyTracking)
+            return;
+
         DataTrackingModel.ForgetLessonsEntry forgetLessonsEntry = new DataTrackingModel.ForgetLessonsEntry();
         forgetLessonsEntry.entryTime = System.currentTimeMillis();
         forgetLessonsEntry.sessionID = sessionID;
