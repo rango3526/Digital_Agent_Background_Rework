@@ -62,8 +62,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, GlobalVars.NOTIF_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notif_icon)
-                .setContentTitle("Interesting object found!")
-                .setContentText("You took a photo of a(n) " + mi.objectDetected)
+                .setContentTitle(" ")
+                .setContentText("Time to learn science facts about that " + mi.objectDetected + "!")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);

@@ -80,7 +80,7 @@ public class DataTrackingManager {
             return;
 
         if (dtm.getAvatarHistory().size() > 0) { // Since prev is ending, set its duration in tracking data
-            int index = dtm.getPageHistory().size()-1;
+            int index = dtm.getAvatarHistory().size()-1;
             DataTrackingModel.AvatarEntry prevAvatarEntry = dtm.getAvatarHistory().get(index);
             prevAvatarEntry.millisecondsKept = System.currentTimeMillis() - prevAvatarEntry.entryTime;
         }

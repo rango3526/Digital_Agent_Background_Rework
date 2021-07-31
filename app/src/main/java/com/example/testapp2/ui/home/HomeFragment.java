@@ -70,30 +70,6 @@ public class HomeFragment extends Fragment {
 //            }
 //        });
 
-        binding.viewLessons.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, LessonListFragment.class);
-                startActivity(intent);
-            }
-        });
-
-        binding.forgetLessons.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DataTrackingManager.forgetLessonsClicked(sessionID);
-                LessonListFragment.clearImageHistory(context);
-            }
-        });
-
-        binding.stopAnalyzing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DataTrackingManager.stopRefreshClicked(sessionID);
-                HelperCode.cancelAlarm(context);
-            }
-        });
-
         // Make sure we have the right permissions to access photos in  the background
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
             askForExternalStoragePermission();

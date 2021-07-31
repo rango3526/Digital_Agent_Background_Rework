@@ -18,43 +18,41 @@
 
     <TextView
         android:id="@+id/textView3"
-        app:layout_constraintWidth_percent="0.9"
-        app:layout_constraintHeight_percent="0.1"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:text="I'll check your photos in the background and notify you if I find something interesting."
-        android:textColor="?android:attr/textColorPrimary"
-        android:autoSizeMinTextSize="12sp"
         android:autoSizeMaxTextSize="25sp"
-        android:autoSizeStepGranularity="1sp"
+        android:autoSizeMinTextSize="12sp"
+        android:autoSizeStepGranularity="4sp"
+        android:gravity="center"
+        android:text="I'll check new photos in the background and notify you if I find something interesting."
+        android:textColor="?android:attr/textColorPrimary"
         app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintHeight_percent="0.12"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintWidth_percent="0.9" />
 
     <TextView
         android:id="@+id/textView4"
-        app:layout_constraintWidth_percent="0.9"
         android:layout_width="0dp"
-        app:layout_constraintHeight_percent="0.1"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="20dp"
+        android:autoSizeMaxTextSize="20sp"
+        android:autoSizeMinTextSize="12sp"
+        android:autoSizeStepGranularity="4sp"
         android:gravity="center"
         android:text="You can navigate the app with the side menu at the top left of the screen."
         android:textColor="?android:attr/textColorPrimary"
-        android:autoSizeMinTextSize="12sp"
-        android:autoSizeMaxTextSize="20sp"
-        android:autoSizeStepGranularity="1sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintHeight_percent="0.1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        app:layout_constraintWidth_percent="0.9" />
 
     <ImageView
         android:id="@+id/avatarImageView"
@@ -80,61 +78,12 @@
         android:textColor="?android:attr/textColorPrimary"
         android:autoSizeMinTextSize="12sp"
         android:autoSizeMaxTextSize="20sp"
-        android:autoSizeStepGranularity="1sp"
+        android:autoSizeStepGranularity="4sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/avatarImageView"
         android:gravity="center"/>
 
-    <Button
-        android:id="@+id/viewLessons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:backgroundTint="@color/deep_blue"
-        android:text="View lessons"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stopAnalyzing"
-        android:visibility="gone"/>
 
-    <Button
-        android:id="@+id/forgetLessons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:backgroundTint="@color/deep_blue"
-        android:text="Forget all lessons"
-        app:layout_constraintBottom_toTopOf="@+id/changeAvatar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewLessons"
-        app:layout_constraintVertical_bias="0.13" />
-
-    <Button
-        android:id="@+id/changeAvatar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="56dp"
-        android:backgroundTint="@color/deep_blue"
-        android:text="Change avatar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        android:visibility="gone"/>
-
-    <Button
-        android:id="@+id/stopAnalyzing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="28dp"
-        android:backgroundTint="@color/deep_blue"
-        android:text="Stop Refreshing in Background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 </androidx.constraintlayout.widget.ConstraintLayout>

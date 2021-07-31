@@ -79,6 +79,15 @@ public class LessonListFragment extends Fragment {
             }
         });
 
+        binding.forgetLessons.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DataTrackingManager.forgetLessonsClicked(sessionID);
+                LessonListFragment.clearImageHistory(context);
+                // TODO: make page refresh immediately when pressed (right now must, navigate to a different page then back to remove lessons from view)
+            }
+        });
+
         FirebaseManager.updateFirestoreObjectLessons();
 
 

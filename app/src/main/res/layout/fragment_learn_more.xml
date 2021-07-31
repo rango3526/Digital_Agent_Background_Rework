@@ -21,21 +21,21 @@
 
     <TextView
         android:id="@+id/videoDialogueBubble"
-        app:layout_constraintWidth_percent="0.7"
         android:layout_width="0dp"
-        app:layout_constraintHeight_percent="0.12"
         android:layout_height="0dp"
+        android:autoSizeMaxTextSize="14dp"
+        android:autoSizeTextType="uniform"
         android:background="@drawable/speech_bubble_background"
         android:backgroundTint="@color/light_blue"
         android:padding="10dp"
         android:paddingStart="20dp"
-        android:text="Interested in learning more? Let's watch a video together, or bookmark it for later."
+        android:text="Did you find that fact interesting?"
         android:textColor="#000000"
-        android:autoSizeMaxTextSize="14dp"
-        android:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="@+id/descriptionBubble"
+        app:layout_constraintHeight_percent="0.12"
         app:layout_constraintStart_toStartOf="@+id/descriptionBubble"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionBubble" />
+        app:layout_constraintTop_toBottomOf="@+id/descriptionBubble"
+        app:layout_constraintWidth_percent="0.7" />
 
     <TextView
         android:id="@+id/descriptionBubble"
@@ -111,7 +111,8 @@
         android:text="Watch video"
         android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/videoDialogueBubble" />
+        app:layout_constraintTop_toBottomOf="@+id/videoDialogueBubble"
+        android:visibility="gone"/>
 
     <ToggleButton
         android:id="@+id/bookmarkToggle"
@@ -126,4 +127,28 @@
         app:layout_constraintStart_toEndOf="@+id/watchVideoButton"
         app:layout_constraintTop_toTopOf="@+id/watchVideoButton"
         app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/yesButton"
+        android:layout_width="66dp"
+        android:layout_height="37dp"
+        android:text="Yes"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/videoDialogueBubble"
+        app:layout_constraintEnd_toEndOf="@+id/videoDialogueBubble"
+        app:layout_constraintStart_toStartOf="@+id/videoDialogueBubble"
+        app:layout_constraintTop_toTopOf="@+id/videoDialogueBubble"
+        app:layout_constraintVertical_bias="0.55"
+        app:layout_constraintHorizontal_bias="0.25"/>
+
+    <Button
+        android:id="@+id/noButton"
+        android:layout_width="66dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="20dp"
+        android:text="No"
+        android:textSize="10sp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/yesButton"
+        app:layout_constraintTop_toTopOf="@+id/yesButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>

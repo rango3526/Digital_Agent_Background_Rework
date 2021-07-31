@@ -15,4 +15,5 @@
     <string name="menu_learnMore">Learn More</string>
     <string name="menu_avatarSelect">Choose an Avatar</string>
     <string name="menu_signIn">Set Your ID</string>
+    <string name="menu_settings">Settings</string>
 </resources>

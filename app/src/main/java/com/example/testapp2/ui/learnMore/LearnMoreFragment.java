@@ -94,6 +94,20 @@ public class LearnMoreFragment extends Fragment {
             }
         });
 
+        binding.yesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: implement
+            }
+        });
+
+        binding.noButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: implement
+            }
+        });
+
         binding.avatarImageView.setImageURI(AvatarSelectFragment.getCurAvatar(getActivity()).getImageUri());
 
         return root;
