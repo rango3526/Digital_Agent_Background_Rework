@@ -25,6 +25,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -179,6 +180,7 @@ public class FirebaseManager {
 
         // This will be overwritten/merged when the below code runs (asynchronously)
         // If the code below finds no previous DTM stored in Firebase, then this is the default and will be kept as-is
+        DataTrackingManager.lockUpload();
         DataTrackingModel dtm = new DataTrackingModel();
         dtm.setParticipantID(participantID);
         dtm.setParticipantName("Firstname Lastname");
@@ -199,10 +201,12 @@ public class FirebaseManager {
                         return;
                     }
                     DataTrackingModel onlineDtm = snapshot.getValue(DataTrackingModel.class);
+                    Log.e("Stuff", "Online DTM is: " + (new Gson().toJson(onlineDtm)));
                     // Merges the offline version with the online version, once online is retrieved
                     DataTrackingManager.unlockUpload();
                     // TODO: Fix merge! For some reason it deletes all previous history when merging!
                     DataTrackingManager.setDTM(DataTrackingManager.mergeDtms(onlineDtm, DataTrackingManager.getDTM()));
+                    Log.e("Stuff", "DTMs done merging and DTM is set");
                 }
                 else {
                     Log.e("Stuff", "Realtime database access failed; trying again");

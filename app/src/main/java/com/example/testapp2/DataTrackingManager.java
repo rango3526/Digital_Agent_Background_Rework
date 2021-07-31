@@ -1,6 +1,7 @@
 package com.example.testapp2;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -134,15 +135,46 @@ public class DataTrackingManager {
         dtmChanged();
     }
 
-    public static void notificationClicked(long sessionID, MyImage myImage, ObjectLesson objectLesson) {
+    public static void notificationSent(long notificationID, long sessionID, Intent intent) {
         if (!currentlyTracking)
             return;
 
-        DataTrackingModel.NotificationClickEntry notificationClickEntry = new DataTrackingModel.NotificationClickEntry();
-        notificationClickEntry.clickTime = System.currentTimeMillis();
-        notificationClickEntry.leadsToSessionID = -99;
-        notificationClickEntry.objectDetected = myImage.objectDetected;
-        dtm.pushToNotificationClickedHistory(notificationClickEntry);
+        DataTrackingModel.NotificationEntry notificationEntry = new DataTrackingModel.NotificationEntry();
+        notificationEntry.clickTime = -1;
+        notificationEntry.leadsToSessionID = sessionID;
+        notificationEntry.notificationID = notificationID;
+        notificationEntry.objectDetected = intent.getStringExtra("objectFound");
+        notificationEntry.sentTime = System.currentTimeMillis();
+        dtm.pushToNotificationClickedHistory(notificationEntry);
+
+        dtmChanged();
+    }
+
+    public static void notificationClicked(long notificationID) {
+        if (!currentlyTracking)
+            return;
+
+        ArrayList<DataTrackingModel.NotificationEntry> notificationHistory = dtm.getNotificationClickHistory();
+
+        boolean notifEntryFound = false;
+        for (DataTrackingModel.NotificationEntry notificationEntry : notificationHistory) {
+            if (notificationEntry.notificationID == notificationID) {
+                notificationEntry.clickTime = System.currentTimeMillis();
+                notifEntryFound = true;
+            }
+        }
+
+        // this is expected, since the DB most certainly won't have time to connect before processing this
+        if (!notifEntryFound) {
+            Log.e("Stuff", "No notif entry found; making a placeholder");
+            DataTrackingModel.NotificationEntry notificationEntry = new DataTrackingModel.NotificationEntry();
+            notificationEntry.clickTime = System.currentTimeMillis();
+            notificationEntry.sentTime = -1;
+            notificationEntry.notificationID = notificationID;
+            dtm.pushToNotificationClickedHistory(notificationEntry);
+            // TODO: handle this by making a new entry and making it merge when connection is established -- DONE, but bugged
+            // this is a likely error because right when the notification is clicked this will run, so app won't have time to query firebase (if app was closed)
+        }
 
         dtmChanged();
     }
@@ -202,6 +234,8 @@ public class DataTrackingManager {
     }
 
     public static DataTrackingModel mergeDtms(DataTrackingModel dtm1, DataTrackingModel dtm2) {
+        // This is made to be used for merging a temporary (offline) dtm with one that is found when the firebase query is complete
+        // For example, when the app opens each time and must record data before firebase can be queried
         Log.e("Stuff", "DTMs merging...");
 
         DataTrackingModel earliestDtm = dtm2;
@@ -211,6 +245,7 @@ public class DataTrackingManager {
             latestDtm = dtm2;
         }
 
+        // Simply add all the histories together
         earliestDtm.getAvatarHistory().addAll(latestDtm.getAvatarHistory());
         earliestDtm.getLessonHistory().addAll(latestDtm.getLessonHistory());
         earliestDtm.getForgetLessonsHistory().addAll(latestDtm.getForgetLessonsHistory());
@@ -218,7 +253,65 @@ public class DataTrackingManager {
         earliestDtm.getPageHistory().addAll(latestDtm.getPageHistory());
         earliestDtm.getAppUseHistory().addAll(latestDtm.getAppUseHistory());
 
+        // Handle unmatched duplicate entries in notifications
+        ArrayList<DataTrackingModel.NotificationEntry> unmatchedClicked = new ArrayList<>();
+        ArrayList<DataTrackingModel.NotificationEntry> unmatchedSent = new ArrayList<>();
+        for (DataTrackingModel.NotificationEntry notificationEntry : earliestDtm.getNotificationClickHistory()) {
+            if (notificationEntry.clickTime == -1) {
+                unmatchedSent.add(notificationEntry);
+                continue;
+            }
+            if (notificationEntry.sentTime == -1) {
+                unmatchedClicked.add(notificationEntry);
+            }
+        }
+
+        if (unmatchedClicked.size() > 0) {
+            if (unmatchedSent.size() > 0) {
+                for (DataTrackingModel.NotificationEntry clicked : unmatchedClicked) {
+                    boolean handled = false;
+                    for (DataTrackingModel.NotificationEntry sent : unmatchedSent) {
+                        if (sent.notificationID == clicked.notificationID) {
+                            sent.clickTime = clicked.clickTime;
+                            if (!earliestDtm.getNotificationClickHistory().remove(clicked)) {
+                                Log.e("Stuff", "Unable to removed duplicated notification click entry");
+                            }
+                            else {
+                                Log.e("Stuff", "Merged notification successfully");
+                            }
+                            handled = true;
+                            break;
+                        }
+                        else {
+                            Log.e("Stuff", "Not a match; sent: " + sent.notificationID + ", clicked: " + clicked.notificationID);
+                        }
+                    }
+                    if (!handled) {
+                        if (!earliestDtm.getNotificationClickHistory().remove(clicked)) {
+                            Log.e("Stuff", "Unable to remove duplicated (and NONMATCHED) notification click entry");
+                        }
+                        else {
+                            Log.e("Stuff", "Unable to find match for clicked notification, so it has been deleted (successfully)");
+                        }
+                    }
+                }
+            }
+            else {
+                Log.e("Stuff", "Can't match any unmatched clicked notifs because there are no unmatched sent notifs!");
+            }
+        }
+
+//        for (DataTrackingModel.NotificationEntry clicked : unmatchedClicked) {
+//            if (!dtm.getNotificationClickHistory().remove(clicked)) {
+//                Log.e("Stuff", "COULD NOT REMOVE FROM HISTORY");
+//            }
+//        }
+
         return earliestDtm;
+    }
+
+    public static void lockUpload() {
+        uploadLocked = true;
     }
 
     public static void unlockUpload() {

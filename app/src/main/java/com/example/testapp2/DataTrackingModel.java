@@ -1,9 +1,5 @@
 package com.example.testapp2;
 
-import android.provider.Settings;
-
-import androidx.fragment.app.Fragment;
-
 import java.util.ArrayList;
 
 public class DataTrackingModel {
@@ -82,11 +78,11 @@ public class DataTrackingModel {
         this.appUseHistory = appUseHistory;
     }
 
-    public ArrayList<NotificationClickEntry> getNotificationClickHistory() {
+    public ArrayList<NotificationEntry> getNotificationClickHistory() {
         return notificationClickHistory;
     }
 
-    public void setNotificationClickHistory(ArrayList<NotificationClickEntry> notificationClickHistory) {
+    public void setNotificationClickHistory(ArrayList<NotificationEntry> notificationClickHistory) {
         this.notificationClickHistory = notificationClickHistory;
     }
 
@@ -98,7 +94,7 @@ public class DataTrackingModel {
         avatarHistory.add(avatarEntry);
     }
 
-    public void pushToNotificationClickedHistory(NotificationClickEntry notificationClickEntry) {
+    public void pushToNotificationClickedHistory(NotificationEntry notificationClickEntry) {
         notificationClickHistory.add(notificationClickEntry);
     }
 
@@ -162,12 +158,14 @@ public class DataTrackingModel {
     }
     private ArrayList<AppUseEntry> appUseHistory = new ArrayList<>();
 
-    public static class NotificationClickEntry {
+    public static class NotificationEntry {
+        public long sentTime = -1;
         public long clickTime = -1;
+        public long notificationID = -1;
         public long leadsToSessionID = -1;
         public String objectDetected = "";
     }
-    private ArrayList<NotificationClickEntry> notificationClickHistory = new ArrayList<>();
+    private ArrayList<NotificationEntry> notificationClickHistory = new ArrayList<>();
 
     public ArrayList<ForgetLessonsEntry> getForgetLessonsHistory() {
         return forgetLessonsHistory;

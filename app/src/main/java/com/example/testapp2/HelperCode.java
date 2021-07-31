@@ -124,7 +124,7 @@ public class HelperCode {
 
     public static long generateSessionID() {
         if (random == null)
-            random = new Random(System.currentTimeMillis());
+            random = new Random();
         return random.nextLong();
     }
 

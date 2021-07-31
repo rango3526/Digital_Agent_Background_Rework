@@ -111,6 +111,12 @@ public class MainActivity extends AppCompatActivity {
 //            Log.e("Stuff", "Should send to lesson now");
             long myImageID = intent.getLongExtra("myImageID", -1);
             long sessionID = intent.getLongExtra("sessionID", -1);
+            long notificationID = intent.getLongExtra("notificationID", -1);
+            Log.e("Stuff", "Notif id found in intent: " + notificationID);
+            Log.e("Stuff", "Random num: " + intent.getLongExtra("randomNum", -1));
+            if (notificationID == -1) {
+                Log.e("Stuff", "No notificationID found in intent");
+            }
             if (myImageID == -1) {
                 throw new RuntimeException("Did not find proper image ID in notification intent");
             }
@@ -125,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             // TODO: Fix; this line causes a crash (apparently DataTrackingManager is null???)
             // Okay it's because the DTM hasn't loaded yet; it's too quick
             // TODO: Need to make app work offline -- Fixed? At least for DTM stuff maybe
-//            DataTrackingManager.notificationClicked(sessionID, curImage, FirebaseManager.getFirestoreObjectData(curImage.objectDetected));
+            DataTrackingManager.notificationClicked(notificationID);
         }
 
         FirebaseManager.updateFirestoreObjectLessons();

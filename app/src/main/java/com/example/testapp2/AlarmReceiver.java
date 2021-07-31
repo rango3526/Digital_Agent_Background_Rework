@@ -24,6 +24,7 @@ import com.example.testapp2.ui.gallery.LessonListFragment;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -57,8 +58,11 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private static void sendNotification(Context context, MyImage mi) {
-        Intent intent = AlarmReceiver.getIntentForObjectLesson(HelperCode.generateSessionID(), context, mi);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        long notificationID = HelperCode.generateSessionID();
+        long toSessionID = HelperCode.generateSessionID();
+
+        Intent intent = AlarmReceiver.getIntentForObjectLesson(notificationID, toSessionID, context, mi);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, (new Random().nextInt()), intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, GlobalVars.NOTIF_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notif_icon)
@@ -71,7 +75,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
 // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(0, builder.build());
+        notificationManager.notify(new Random().nextInt(), builder.build());
+
+        DataTrackingManager.notificationSent(notificationID, toSessionID, intent);
     }
 
 
@@ -161,7 +167,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     public static void alarmTriggered(Context context) {
-        new Thread(new Runnable() { // Executes in working thread so it doesn't block the main/ui thread
+        new Thread(new Runnable() { // Executes in worker thread so it doesn't block the main/ui thread
             public void run() {
                 long latestDate = 0;
 
@@ -201,13 +207,15 @@ public class AlarmReceiver extends BroadcastReceiver {
         }).start();
     }
 
-    public static Intent getIntentForObjectLesson(long sessionID, Context context, MyImage mi) {
+    public static Intent getIntentForObjectLesson(long notificationID, long sessionID, Context context, MyImage mi) {
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("objectFound", mi.objectDetected);
         intent.putExtra("imageUri", mi.uriString);
         intent.putExtra("myImageID", mi.imageID);
         intent.putExtra("sessionID", sessionID);
+        intent.putExtra("notificationID", notificationID);
+        intent.putExtra("randomNum", HelperCode.generateSessionID());
 
         return intent;
     }
