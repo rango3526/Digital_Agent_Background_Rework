@@ -129,6 +129,13 @@ public class HelperCode {
     }
 
     public static void callInSeconds(Runnable f, double seconds) {
-
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        f.run();
+                    }
+                },
+                (int) (seconds*1000));
     }
 }

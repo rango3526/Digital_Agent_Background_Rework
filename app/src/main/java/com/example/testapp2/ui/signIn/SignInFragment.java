@@ -33,7 +33,9 @@ public class SignInFragment extends Fragment {
         View root = binding.getRoot();
 
         // Default code ^^^
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+        if (getActivity() != null && ((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+        }
 
         EditText inputIDText = binding.inputID;
         binding.doneButton.setOnClickListener(new View.OnClickListener() {

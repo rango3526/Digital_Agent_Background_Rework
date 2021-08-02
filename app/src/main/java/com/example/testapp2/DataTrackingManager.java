@@ -174,8 +174,22 @@ public class DataTrackingManager {
         if (!currentlyTracking)
             return;
 
+        appMovedToForeground(String.valueOf(System.currentTimeMillis()));
+    }
+
+    private static void appMovedToForeground(String entryTime) {
+        if (!currentlyTracking)
+            return;
+
+        if (dtm == null) {
+            Log.e("Stuff", "Trying foreground again");
+            HelperCode.callInSeconds(() -> appMovedToForeground(entryTime), 1);
+            return;
+        }
+
+        Log.e("Stuff", "Foreground successful");
         DataTrackingModel.AppUseEntry appUseEntry = new DataTrackingModel.AppUseEntry();
-        appUseEntry.entryTime = String.valueOf(System.currentTimeMillis());
+        appUseEntry.entryTime = entryTime;
         dtm.pushToAppUseHistory(appUseEntry);
 
         reinitializeTrackingOfCurrentPage();
@@ -193,6 +207,19 @@ public class DataTrackingManager {
     public static void appMovedToBackground() {
         if (!currentlyTracking)
             return;
+
+        appMovedToBackground(String.valueOf(System.currentTimeMillis()));
+    }
+
+    public static void appMovedToBackground(String entryTime) {
+        if (!currentlyTracking)
+            return;
+
+        if (dtm == null) {
+            Log.e("Stuff", "Trying foreground again");
+            HelperCode.callInSeconds(() -> appMovedToBackground(entryTime), 1);
+            return;
+        }
 
         finishPrevPage();
         finishPrevAvatar();
