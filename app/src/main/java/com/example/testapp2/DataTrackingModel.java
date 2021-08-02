@@ -110,6 +110,10 @@ public class DataTrackingModel {
         forgetLessonsHistory.add(forgetLessonsEntry);
     }
 
+    public void pushToAppUseHistory(AppUseEntry appUseEntry) {
+        appUseHistory.add(appUseEntry);
+    }
+
     public static class AvatarEntry {
         public String avatarName = "";
         public String endTime = "";

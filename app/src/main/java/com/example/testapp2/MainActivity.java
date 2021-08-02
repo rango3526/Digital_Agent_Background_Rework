@@ -1,6 +1,6 @@
 package com.example.testapp2;
 
-import android.arch.lifecycle.ProcessLifecycleOwner;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Custom here
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(appLifeCycleObserver); // For detecting when app is moved between foreground and background, etc
+//        ProcessLifecycleOwner.get().getLifecycle().addObserver(appLifeCycleObserver); // For detecting when app is moved between foreground and background, etc
         AvatarSelectFragment.prepareAvatarData(getApplicationContext());
 
         String participantID = HelperCode.getSharedPrefsObj(getApplicationContext()).getString(GlobalVars.PARTICIPANT_ID_PREF_KEY, "");

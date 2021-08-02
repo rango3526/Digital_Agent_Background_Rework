@@ -20,11 +20,12 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.GlobalVars;
 import com.example.testapp2.HelperCode;
+import com.example.testapp2.MyFragmentInterface;
 import com.example.testapp2.databinding.FragmentHomeBinding;
 import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
 import com.example.testapp2.BuildConfig;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements MyFragmentInterface {
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
@@ -50,7 +51,7 @@ public class HomeFragment extends Fragment {
 
         // If just passing over, it should not record it because the user isn't explicitly visiting it
         if (!passingOverFragment) {
-            DataTrackingManager.pageChange(sessionID, "Home");
+            notifyTrackerOfPage();
         }
         else
             passingOverFragment = false;
@@ -109,5 +110,10 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void notifyTrackerOfPage() {
+        DataTrackingManager.pageChange(this, sessionID, "Home");
     }
 }

@@ -12,9 +12,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.testapp2.MyFragmentInterface;
 import com.example.testapp2.databinding.FragmentSlideshowBinding;
 
-public class TemplateFragment extends Fragment {
+public class TemplateFragment extends Fragment implements MyFragmentInterface {
 
     private com.example.testapp2.ui.template.TemplateViewModel templateViewModel;
     private FragmentSlideshowBinding binding;
@@ -34,5 +35,10 @@ public class TemplateFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void notifyTrackerOfPage() {
+
     }
 }

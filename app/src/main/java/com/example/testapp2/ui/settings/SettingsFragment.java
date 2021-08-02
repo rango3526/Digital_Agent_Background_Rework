@@ -13,10 +13,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.HelperCode;
 import com.example.testapp2.MainActivity;
+import com.example.testapp2.MyFragmentInterface;
 import com.example.testapp2.R;
 import com.example.testapp2.databinding.FragmentSettingsBinding;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements MyFragmentInterface {
 
     private SettingsViewModel templateViewModel;
     private FragmentSettingsBinding binding;
@@ -34,7 +35,7 @@ public class SettingsFragment extends Fragment {
         // Default code ^^^
         if (sessionID.equals(""))
             sessionID = HelperCode.generateLongID();
-        DataTrackingManager.pageChange(sessionID, "Settings");
+        notifyTrackerOfPage();
 
         binding.stopAnalyzing.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,5 +60,10 @@ public class SettingsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void notifyTrackerOfPage() {
+        DataTrackingManager.pageChange(this, sessionID, "Settings");
     }
 }

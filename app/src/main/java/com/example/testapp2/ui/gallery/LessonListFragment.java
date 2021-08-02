@@ -23,13 +23,14 @@ import com.example.testapp2.GlobalVars;
 import com.example.testapp2.HelperCode;
 import com.example.testapp2.LessonListRecyclerViewAdapter;
 import com.example.testapp2.MainActivity;
+import com.example.testapp2.MyFragmentInterface;
 import com.example.testapp2.MyImage;
 import com.example.testapp2.ObjectLesson;
 import com.example.testapp2.databinding.FragmentLessonListBinding;
 
 import java.util.ArrayList;
 
-public class LessonListFragment extends Fragment {
+public class LessonListFragment extends Fragment implements MyFragmentInterface {
 
     private LessonListViewModel galleryViewModel;
     private FragmentLessonListBinding binding;
@@ -55,7 +56,7 @@ public class LessonListFragment extends Fragment {
         context = getActivity();
         if (sessionID.equals(""))
             sessionID = HelperCode.generateLongID();
-        DataTrackingManager.pageChange(sessionID, "LessonList");
+        notifyTrackerOfPage();
 
         binding.bookmarkSwitch.setChecked(onlyBookmarks);
 
@@ -205,5 +206,10 @@ public class LessonListFragment extends Fragment {
 
     public void setSessionID(String _sessionID) {
         sessionID = _sessionID;
+    }
+
+    @Override
+    public void notifyTrackerOfPage() {
+        DataTrackingManager.pageChange(this, sessionID, "LessonList");
     }
 }

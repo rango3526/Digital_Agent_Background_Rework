@@ -25,6 +25,7 @@ import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.FirebaseManager;
 import com.example.testapp2.HelperCode;
 import com.example.testapp2.MainActivity;
+import com.example.testapp2.MyFragmentInterface;
 import com.example.testapp2.MyImage;
 import com.example.testapp2.ObjectLesson;
 import com.example.testapp2.R;
@@ -33,7 +34,7 @@ import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
 import com.example.testapp2.ui.gallery.LessonListFragment;
 import com.example.testapp2.ui.learnMore.LearnMoreFragment;
 
-public class LessonFragment extends Fragment {
+public class LessonFragment extends Fragment implements MyFragmentInterface {
 
     private LessonViewModel slideshowViewModel;
     private FragmentLessonBinding binding;
@@ -67,7 +68,7 @@ public class LessonFragment extends Fragment {
 
         if (sessionID.equals(""))
             sessionID = HelperCode.generateLongID();
-        DataTrackingManager.pageChange(sessionID, "Lesson", lessonID);
+        notifyTrackerOfPage();
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 
@@ -144,6 +145,11 @@ public class LessonFragment extends Fragment {
         context = getActivity();
         mi = _mi;
         lessonID = mi.lessonID;
+    }
+
+    @Override
+    public void notifyTrackerOfPage() {
+        DataTrackingManager.pageChange(this, sessionID, "Lesson", lessonID);
     }
 
 //    public void setSessionID(long _sessionID) {

@@ -13,6 +13,8 @@ public class DataTrackingManager {
     // Uploading DTM is locked until it has synced with the Firebase
     private static boolean uploadLocked = true;
 
+    private static MyFragmentInterface mostRecentPage;
+
     private static Context context;
 
     public static void startTracking(Context _context, String participantID) {
@@ -31,21 +33,21 @@ public class DataTrackingManager {
             FirebaseManager.uploadDTM(dtm);
     }
 
-    public static void pageChange(String sessionID, String pageName, String lessonID) {
+    public static void pageChange(MyFragmentInterface obj, String sessionID, String pageName, String lessonID) {
         if (!currentlyTracking)
             return;
 
-        pageChange(sessionID, String.valueOf(System.currentTimeMillis()), "", pageName, lessonID);
+        pageChange(obj, sessionID, String.valueOf(System.currentTimeMillis()), "", pageName, lessonID);
     }
 
-    public static void pageChange(String sessionID, String pageName) {
+    public static void pageChange(MyFragmentInterface obj, String sessionID, String pageName) {
         if (!currentlyTracking)
             return;
 
-        pageChange(sessionID, String.valueOf(System.currentTimeMillis()), "", pageName, "");
+        pageChange(obj, sessionID, String.valueOf(System.currentTimeMillis()), "", pageName, "");
     }
 
-    public static void pageChange(String sessionID, String entryTime, String millisecondsOnPage, String pageName, String lessonID) {
+    public static void pageChange(MyFragmentInterface obj, String sessionID, String entryTime, String millisecondsOnPage, String pageName, String lessonID) {
         if (!currentlyTracking)
             return;
 
@@ -53,18 +55,16 @@ public class DataTrackingManager {
         // For example, if the user installs the app without wifi for a long time, then the app will crash
         // TODO: Unknown behavior all the time without internet connection
 
+        mostRecentPage = obj;
+
         if (dtm == null) { // If the dtm hasn't been created (so the system hasn't had time to connect to firebase yet), it will just keep waiting until it does
             Log.e("Stuff", "Waiting 1 second and trying again");
-            HelperCode.callInSeconds(() -> pageChange(sessionID, entryTime, millisecondsOnPage, pageName, lessonID), 1);
+            HelperCode.callInSeconds(() -> pageChange(obj, sessionID, entryTime, millisecondsOnPage, pageName, lessonID), 1);
             return;
         }
         Log.e("Stuff", "Page change info being added to DTM");
 
-        if (dtm.getPageHistory().size() > 0) { // Since prev is ending, set its duration in tracking data
-            int index = dtm.getPageHistory().size()-1;
-            DataTrackingModel.PageEntry prevPageEntry = dtm.getPageHistory().get(index);
-            prevPageEntry.endTime = String.valueOf(System.currentTimeMillis());
-        }
+        finishPrevPage();
 
         DataTrackingModel.PageEntry pe = new DataTrackingModel.PageEntry();
         pe.entryTime = entryTime;
@@ -81,11 +81,7 @@ public class DataTrackingManager {
         if (!currentlyTracking)
             return;
 
-        if (dtm.getAvatarHistory().size() > 0) { // Since prev is ending, set its duration in tracking data
-            int index = dtm.getAvatarHistory().size()-1;
-            DataTrackingModel.AvatarEntry prevAvatarEntry = dtm.getAvatarHistory().get(index);
-            prevAvatarEntry.endTime = String.valueOf(System.currentTimeMillis());
-        }
+        finishPrevAvatar();
 
         DataTrackingModel.AvatarEntry avatarEntry = new DataTrackingModel.AvatarEntry();
         avatarEntry.avatarName = avatarName;
@@ -169,30 +165,38 @@ public class DataTrackingManager {
             notificationEntry.sentTime = "";
             notificationEntry.notificationID = notificationID;
             dtm.pushToNotificationClickedHistory(notificationEntry);
-            // TODO: handle this by making a new entry and making it merge when connection is established -- DONE, but bugged
-            // this is a likely error because right when the notification is clicked this will run, so app won't have time to query firebase (if app was closed)
         }
 
         dtmChanged();
     }
 
-    public static void appOpened() {
+    public static void appMovedToForeground() {
         if (!currentlyTracking)
             return;
+
+        DataTrackingModel.AppUseEntry appUseEntry = new DataTrackingModel.AppUseEntry();
+        appUseEntry.entryTime = String.valueOf(System.currentTimeMillis());
+        dtm.pushToAppUseHistory(appUseEntry);
+
+        reinitializeTrackingOfCurrentPage();
 
         dtmChanged();
     }
 
-    public static void appClosing() {
-        if (!currentlyTracking)
-            return;
-
-        dtmChanged();
+    private static void reinitializeTrackingOfCurrentPage() {
+        if (mostRecentPage != null) {
+            mostRecentPage.notifyTrackerOfPage();
+            Log.e("Stuff", "Re-notified of: " + mostRecentPage.getClass().getName());
+        }
     }
 
-    public static void appSuspending() {
+    public static void appMovedToBackground() {
         if (!currentlyTracking)
             return;
+
+        finishPrevPage();
+        finishPrevAvatar();
+        finishPrevAppUse();
 
         dtmChanged();
     }
@@ -242,6 +246,33 @@ public class DataTrackingManager {
         }
 
         dtmChanged();
+    }
+
+    public static void finishPrevPage() {
+        if (dtm.getPageHistory().size() > 0) { // Since prev is ending, set its duration in tracking data
+            int index = dtm.getPageHistory().size()-1;
+            DataTrackingModel.PageEntry prevPageEntry = dtm.getPageHistory().get(index);
+            if (prevPageEntry.endTime.equals(""))
+                prevPageEntry.endTime = String.valueOf(System.currentTimeMillis());
+        }
+    }
+
+    public static void finishPrevAvatar() {
+        if (dtm.getAvatarHistory().size() > 0) { // Since prev is ending, set its duration in tracking data
+            int index = dtm.getAvatarHistory().size()-1;
+            DataTrackingModel.AvatarEntry prevAvatarEntry = dtm.getAvatarHistory().get(index);
+            if (prevAvatarEntry.endTime.equals(""))
+                prevAvatarEntry.endTime = String.valueOf(System.currentTimeMillis());
+        }
+    }
+
+    public  static void finishPrevAppUse() {
+        if (dtm.getAppUseHistory().size() > 0) {
+            int index = dtm.getAppUseHistory().size()-1;
+            DataTrackingModel.AppUseEntry appUseEntry = dtm.getAppUseHistory().get(index);
+            if (appUseEntry.exitTime.equals(""))
+                appUseEntry.exitTime = String.valueOf(System.currentTimeMillis());
+        }
     }
 
     public static DataTrackingModel mergeDtms(DataTrackingModel dtm1, DataTrackingModel dtm2) {

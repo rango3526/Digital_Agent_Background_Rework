@@ -21,13 +21,14 @@ import com.example.testapp2.AvatarSelectAdapter;
 import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.GlobalVars;
 import com.example.testapp2.HelperCode;
+import com.example.testapp2.MyFragmentInterface;
 import com.example.testapp2.R;
 import com.example.testapp2.databinding.FragmentAvatarSelectBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AvatarSelectFragment extends Fragment {
+public class AvatarSelectFragment extends Fragment implements MyFragmentInterface {
 
     static List<AvatarModel> avatarList = new ArrayList<>();
     private AvatarSelectAdapter mAdapter;
@@ -49,7 +50,7 @@ public class AvatarSelectFragment extends Fragment {
 
         if (sessionID.equals(""))
             sessionID = HelperCode.generateLongID();
-        DataTrackingManager.pageChange(sessionID, "AvatarSelect");
+        notifyTrackerOfPage();
 
         RecyclerView recyclerView = binding.avatarSelectRecyclerView;
         mAdapter = new AvatarSelectAdapter(avatarList);
@@ -121,5 +122,10 @@ public class AvatarSelectFragment extends Fragment {
 
     public void setSessionID(String _sessionID) {
         sessionID = _sessionID;
+    }
+
+    @Override
+    public void notifyTrackerOfPage() {
+        DataTrackingManager.pageChange(this, sessionID, "AvatarSelect");
     }
 }

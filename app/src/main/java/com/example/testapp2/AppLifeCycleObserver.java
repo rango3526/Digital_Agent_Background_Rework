@@ -1,10 +1,10 @@
 package com.example.testapp2;
 
 import android.app.Application;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.arch.lifecycle.ProcessLifecycleOwner;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -17,18 +17,42 @@ public class AppLifeCycleObserver extends Application implements LifecycleObserv
     ///////////////////////////////////////////////
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onEnterForeground() {
-        Log.d("AppController", "Foreground");
         isAppInBackground(false);
-        Toast.makeText(context, "App enter foreground", Toast.LENGTH_SHORT).show();
-        Log.e("Stuff", "ENTER FOREGROUND");
+        DataTrackingManager.appMovedToForeground();
+//        Toast.makeText(context, "App enter foreground", Toast.LENGTH_SHORT).show();
+//        Log.e("Stuff", "ENTER FOREGROUND");
     }
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onEnterBackground() {
-        Log.d("AppController", "Background");
         isAppInBackground(true);
-        Toast.makeText(context, "App enter background", Toast.LENGTH_SHORT).show();
-        Log.e("Stuff", "ENTER BACKGROUND");
+        DataTrackingManager.appMovedToBackground();
+//        Toast.makeText(context, "App enter background", Toast.LENGTH_SHORT).show();
+//        Log.e("Stuff", "ENTER BACKGROUND");
     }
+//    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+//    public void onPause() {
+////        isAppInBackground(true);
+//        Toast.makeText(context, "App Pause", Toast.LENGTH_SHORT).show();
+//        Log.e("Stuff", "ENTER PAUSE");
+//    }
+//    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+//    public void onResume() {
+////        isAppInBackground(true);
+//        Toast.makeText(context, "App Resume", Toast.LENGTH_SHORT).show();
+//        Log.e("Stuff", "ENTER RESUME");
+//    }
+//    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+//    public void onCreateEvent() {
+////        isAppInBackground(true);
+//        Toast.makeText(context, "App Create", Toast.LENGTH_SHORT).show();
+//        Log.e("Stuff", "ENTER CREATE");
+//    }
+//    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+//    public void onDestroyEvent() {
+////        isAppInBackground(true);
+//        Toast.makeText(context, "App Destroy", Toast.LENGTH_SHORT).show();
+//        Log.e("Stuff", "ENTER DESTROY");
+//    }
 ///////////////////////////////////////////////
 
 
@@ -54,6 +78,8 @@ public class AppLifeCycleObserver extends Application implements LifecycleObserv
     @Override
     public void onCreate() {
         super.onCreate();
+
+        Log.e("Stuff", "ON CREATE IN LIFECYCLE");
 
         mInstance = this;
 

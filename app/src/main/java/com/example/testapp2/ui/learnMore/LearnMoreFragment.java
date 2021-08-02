@@ -18,13 +18,14 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.HelperCode;
 import com.example.testapp2.MainActivity;
+import com.example.testapp2.MyFragmentInterface;
 import com.example.testapp2.MyImage;
 import com.example.testapp2.ObjectLesson;
 import com.example.testapp2.databinding.FragmentLearnMoreBinding;
 import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
 import com.example.testapp2.ui.gallery.LessonListFragment;
 
-public class LearnMoreFragment extends Fragment {
+public class LearnMoreFragment extends Fragment implements MyFragmentInterface {
 
     private LearnMoreViewModel LearnMoreViewModel;
     private FragmentLearnMoreBinding binding;
@@ -48,7 +49,7 @@ public class LearnMoreFragment extends Fragment {
         context = getActivity();
         if (sessionID.equals(""))
             sessionID = HelperCode.generateLongID();
-        DataTrackingManager.pageChange(sessionID, "LearnMore");
+        notifyTrackerOfPage();
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 
@@ -120,5 +121,10 @@ public class LearnMoreFragment extends Fragment {
 
     public void setSessionID(String _sessionID) {
         sessionID = _sessionID;
+    }
+
+    @Override
+    public void notifyTrackerOfPage() {
+        DataTrackingManager.pageChange(this, sessionID, "LearnMore");
     }
 }
