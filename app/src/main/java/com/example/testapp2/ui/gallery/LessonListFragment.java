@@ -11,10 +11,8 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,7 +41,7 @@ public class LessonListFragment extends Fragment {
     ArrayList<ObjectLesson> objectLessons = new ArrayList<>();
 
     Context context;
-    long sessionID = -1;
+    String sessionID = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -55,8 +53,8 @@ public class LessonListFragment extends Fragment {
 
         // ^^^ Above is default
         context = getActivity();
-        if (sessionID == -1)
-            sessionID = HelperCode.generateSessionID();
+        if (sessionID.equals(""))
+            sessionID = HelperCode.generateLongID();
         DataTrackingManager.pageChange(sessionID, "LessonList");
 
         binding.bookmarkSwitch.setChecked(onlyBookmarks);
@@ -205,7 +203,7 @@ public class LessonListFragment extends Fragment {
         onlyBookmarks = _onlyBookmarks;
     }
 
-    public void setSessionID(long _sessionID) {
+    public void setSessionID(String _sessionID) {
         sessionID = _sessionID;
     }
 }

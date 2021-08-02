@@ -184,7 +184,7 @@ public class FirebaseManager {
         DataTrackingModel dtm = new DataTrackingModel();
         dtm.setParticipantID(participantID);
         dtm.setParticipantName("Firstname Lastname");
-        dtm.setTimeAppFirstStarted(System.currentTimeMillis());
+        dtm.setTimeAppFirstStarted(String.valueOf(System.currentTimeMillis()));
         DataTrackingManager.setDTM(dtm);
 
         DatabaseReference dbRef = realtimeDatabase.getReference("dataTracking").child(participantID);

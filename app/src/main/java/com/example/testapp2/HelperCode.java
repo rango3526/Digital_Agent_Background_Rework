@@ -122,10 +122,10 @@ public class HelperCode {
         getSharedPrefsObj(context).edit().putString(GlobalVars.AVATAR_NAME_PREF_KEY, name).apply();
     }
 
-    public static long generateSessionID() {
+    public static String generateLongID() {
         if (random == null)
             random = new Random();
-        return random.nextLong();
+        return String.valueOf(random.nextLong());
     }
 
     public static void callInSeconds(Runnable f, double seconds) {

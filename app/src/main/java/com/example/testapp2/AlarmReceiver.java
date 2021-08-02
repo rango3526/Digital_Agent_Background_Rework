@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
@@ -57,11 +56,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    private static void sendNotification(Context context, MyImage mi) {
-        long notificationID = HelperCode.generateSessionID();
-        long toSessionID = HelperCode.generateSessionID();
+    private static void sendNotification(Context context, MyImage mi, String lessonID) {
+        String notificationID = HelperCode.generateLongID();
 
-        Intent intent = AlarmReceiver.getIntentForObjectLesson(notificationID, toSessionID, context, mi);
+        Intent intent = AlarmReceiver.getIntentForObjectLesson(notificationID, lessonID, context, mi);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, (new Random().nextInt()), intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, GlobalVars.NOTIF_CHANNEL_ID)
@@ -77,7 +75,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 // notificationId is a unique int for each notification that you must define
         notificationManager.notify(new Random().nextInt(), builder.build());
 
-        DataTrackingManager.notificationSent(notificationID, toSessionID, intent);
+        DataTrackingManager.notificationSent(notificationID, lessonID, intent);
     }
 
 
@@ -138,7 +136,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 // Stores column values and the contentUri in a local object
                 // that represents the media file.
                 if (!idTable.containsKey(id)) {
-                    imageList.add(new MyImage(contentUri, name, size, dateTaken, "", id, HelperCode.generateSessionID()));
+                    imageList.add(new MyImage(contentUri, name, size, dateTaken, "", id, HelperCode.generateLongID()));
                     idTable.put(id, 1);
                 }
 //                Log.w("MyImage Stuff", contentUri.toString() + " " + name + " " + size + " " + dateTaken);
@@ -160,8 +158,12 @@ public class AlarmReceiver extends BroadcastReceiver {
             String result = MachineLearningManager.AnalyzeImage(context, Uri.parse(mi.uriString));
             if (FirebaseManager.firestoreObjectNameExists(result)) {
                 mi.objectDetected = result;
+                String lessonID = HelperCode.generateLongID(); // origin of each lessonID
+                Log.e("Stuff", "Newly generated: " + lessonID);
+                mi.lessonID = lessonID;
                 LessonListFragment.addMyImage(context, mi);
-                sendNotification(context, mi);
+                sendNotification(context, mi, lessonID);
+                DataTrackingManager.lessonDiscovered(lessonID, result);
             }
         }
     }
@@ -170,8 +172,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         new Thread(new Runnable() { // Executes in worker thread so it doesn't block the main/ui thread
             public void run() {
                 long latestDate = 0;
-
-                // TODO: (Maybe) prevent notifications from covering each other? Right now only one can show at a time, and sequential ones replace previous ones
 
                 createNotificationChannel(context);
 //        Toast.makeText(context, "Checking for new photos...", Toast.LENGTH_SHORT).show();
@@ -207,7 +207,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }).start();
     }
 
-    public static Intent getIntentForObjectLesson(long notificationID, long sessionID, Context context, MyImage mi) {
+    public static Intent getIntentForObjectLesson(String notificationID, String sessionID, Context context, MyImage mi) {
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("objectFound", mi.objectDetected);
@@ -215,8 +215,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         intent.putExtra("myImageID", mi.imageID);
         intent.putExtra("sessionID", sessionID);
         intent.putExtra("notificationID", notificationID);
-        intent.putExtra("randomNum", HelperCode.generateSessionID());
 
         return intent;
     }
 }
+
+// TODO: Making sure lessonDiscovered isn't called randomly!!!

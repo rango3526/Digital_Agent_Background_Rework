@@ -2,7 +2,6 @@ package com.example.testapp2.ui.learnMore;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +30,7 @@ public class LearnMoreFragment extends Fragment {
     private FragmentLearnMoreBinding binding;
 
     Context context;
-    long sessionID = -1;
+    String sessionID = "";
 
     ObjectLesson ol;
     MyImage mi;
@@ -44,17 +43,11 @@ public class LearnMoreFragment extends Fragment {
         binding = FragmentLearnMoreBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        LearnMoreViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-            }
-        });
-
         // ^^^ Default code
 
         context = getActivity();
-        if (sessionID == -1)
-            sessionID = HelperCode.generateSessionID();
+        if (sessionID.equals(""))
+            sessionID = HelperCode.generateLongID();
         DataTrackingManager.pageChange(sessionID, "LearnMore");
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
@@ -69,13 +62,14 @@ public class LearnMoreFragment extends Fragment {
         binding.topicBubble.setText("Let's learn together about " + lessonTopic + "!");
         binding.bookmarkToggle.setChecked(mi.bookmarked);
 
-        binding.watchVideoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent linkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoLink));
-                startActivity(linkIntent);
-            }
-        });
+        // We no longer desire a video as part of the lesson
+//        binding.watchVideoButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent linkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoLink));
+//                startActivity(linkIntent);
+//            }
+//        });
 
         binding.backToMainButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +83,7 @@ public class LearnMoreFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 LessonListFragment.setImageBookmark(context, mi.imageID, isChecked);
-                DataTrackingManager.lessonBookmarked(mi.sessionID, isChecked);
+                DataTrackingManager.lessonBookmarked(mi.lessonID, isChecked);
                 mi.bookmarked = true;
             }
         });
@@ -97,14 +91,14 @@ public class LearnMoreFragment extends Fragment {
         binding.yesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: implement
+                DataTrackingManager.lessonInterestingClick(mi.lessonID, true);
             }
         });
 
         binding.noButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: implement
+                DataTrackingManager.lessonInterestingClick(mi.lessonID, false);
             }
         });
 
@@ -124,7 +118,7 @@ public class LearnMoreFragment extends Fragment {
         mi = _mi;
     }
 
-    public void setSessionID(long _sessionID) {
+    public void setSessionID(String _sessionID) {
         sessionID = _sessionID;
     }
 }

@@ -1,7 +1,7 @@
 package com.example.testapp2.ui.settings;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +15,13 @@ import com.example.testapp2.HelperCode;
 import com.example.testapp2.MainActivity;
 import com.example.testapp2.R;
 import com.example.testapp2.databinding.FragmentSettingsBinding;
-import com.example.testapp2.databinding.FragmentSlideshowBinding;
-import com.example.testapp2.ui.gallery.LessonListFragment;
 
 public class SettingsFragment extends Fragment {
 
     private SettingsViewModel templateViewModel;
     private FragmentSettingsBinding binding;
 
-    long sessionID = -1;
+    String sessionID = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -34,8 +32,9 @@ public class SettingsFragment extends Fragment {
         View root = binding.getRoot();
 
         // Default code ^^^
-        if (sessionID == -1)
-            sessionID = HelperCode.generateSessionID();
+        if (sessionID.equals(""))
+            sessionID = HelperCode.generateLongID();
+        DataTrackingManager.pageChange(sessionID, "Settings");
 
         binding.stopAnalyzing.setOnClickListener(new View.OnClickListener() {
             @Override

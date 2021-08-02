@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,8 +33,6 @@ import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
 import com.example.testapp2.ui.gallery.LessonListFragment;
 import com.example.testapp2.ui.learnMore.LearnMoreFragment;
 
-import java.util.Random;
-
 public class LessonFragment extends Fragment {
 
     private LessonViewModel slideshowViewModel;
@@ -44,7 +41,8 @@ public class LessonFragment extends Fragment {
     FragmentManager fragmentManager;
 
     private MyImage mi;
-    long sessionID = -1;
+    String lessonID = "";
+    String sessionID = "";
 
     Context context;
 
@@ -66,9 +64,10 @@ public class LessonFragment extends Fragment {
         // ^^^ Default stuff
         context = getActivity();
         ObjectLesson ol = FirebaseManager.getFirestoreObjectData(mi.objectDetected);
-        if (sessionID == -1)
-            Log.e("Stuff", "This lesson needs a sessionID");
-        DataTrackingManager.pageChange(sessionID, "Lesson");
+
+        if (sessionID.equals(""))
+            sessionID = HelperCode.generateLongID();
+        DataTrackingManager.pageChange(sessionID, "Lesson", lessonID);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 
@@ -116,15 +115,21 @@ public class LessonFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 LessonListFragment.setImageBookmark(context, mi.imageID, isChecked);
-                DataTrackingManager.lessonBookmarked(mi.sessionID, isChecked);
+                DataTrackingManager.lessonBookmarked(mi.lessonID, isChecked);
+                // TODO: Think: Lessons can be clicked on multiple times, creating multiple lesson entries
+                // so the bookmark will have multiple entries to find, meaning duplicate data
+                // But since each different lesson will theoretically be a different fact, we can't just make a
+                // central lessons thing.
+                // Therefore, inside each lessonEntry, have an activity history (so that no new lesson entries are created
+                // each time the same lesson is visited (leave that for the pageHistory))
+
+                // Scratch all that; we don't need an activity history in each lesson because we have the pageHistory
+                // Therefore, just make the lessons thing more static, for when new lessons are discovered
                 mi.bookmarked = isChecked;
             }
         });
 
         binding.avatarImageView.setImageURI(AvatarSelectFragment.getCurAvatar(getActivity()).getImageUri());
-
-        DataTrackingManager.lessonOpened(sessionID, mi.objectDetected);
-        DataTrackingManager.pageChange(sessionID, "Lesson");
 
         return root;
     }
@@ -138,7 +143,7 @@ public class LessonFragment extends Fragment {
     public void setLessonData(MyImage _mi) {
         context = getActivity();
         mi = _mi;
-        sessionID = mi.sessionID;
+        lessonID = mi.lessonID;
     }
 
 //    public void setSessionID(long _sessionID) {

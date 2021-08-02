@@ -9,15 +9,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.testapp2.DataTrackingManager;
@@ -25,15 +22,7 @@ import com.example.testapp2.GlobalVars;
 import com.example.testapp2.HelperCode;
 import com.example.testapp2.databinding.FragmentHomeBinding;
 import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
-import com.example.testapp2.ui.gallery.LessonListFragment;
 import com.example.testapp2.BuildConfig;
-import com.google.android.gms.tasks.OnCanceledListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 public class HomeFragment extends Fragment {
 
@@ -41,7 +30,9 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
 
     Context context;
-    long sessionID = -1;
+    String sessionID = "";
+
+    static boolean passingOverFragment = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -54,21 +45,16 @@ public class HomeFragment extends Fragment {
         // ^^^ Above is the default code
 
         context = getActivity();
-        if (sessionID == -1)
-            sessionID = HelperCode.generateSessionID();
-        DataTrackingManager.pageChange(sessionID, "Home");
+        if (sessionID.equals(""))
+            sessionID = HelperCode.generateLongID();
 
-//        FirebaseFirestore.setLoggingEnabled(true);
+        // If just passing over, it should not record it because the user isn't explicitly visiting it
+        if (!passingOverFragment) {
+            DataTrackingManager.pageChange(sessionID, "Home");
+        }
+        else
+            passingOverFragment = false;
 
-//        FirebaseManager.updateFirestoreObjectLessons();
-
-//        binding.beginAnalyzingNewPhotos.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                initializeAlarmManager();
-//                setTestAlarm();
-//            }
-//        });
 
         // Make sure we have the right permissions to access photos in  the background
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
@@ -113,6 +99,10 @@ public class HomeFragment extends Fragment {
                         uri
                 )
         );
+    }
+
+    public static void passOverFragment() {
+        passingOverFragment = true;
     }
 
     @Override

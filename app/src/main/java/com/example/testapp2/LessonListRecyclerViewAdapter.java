@@ -77,7 +77,7 @@ public class LessonListRecyclerViewAdapter extends RecyclerView.Adapter<LessonLi
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Log.e("Bookmark stuff", "Image bookmarked: " + curImage.objectDetected + ", id: " + curImage.imageID + ", is checked before: " + curImage.bookmarked);
                 LessonListFragment.setImageBookmark(context, curImage.imageID, isChecked);
-                DataTrackingManager.lessonBookmarked(curImage.sessionID, isChecked);
+                DataTrackingManager.lessonBookmarked(curImage.lessonID, isChecked);
                 // TODO: Fix bug; if this button is clicked, then the lesson is visited immediately, the following pages don't know it was bookmarked (Lesson, LearnMore)
                 curImage.bookmarked = isChecked; // This is DEFINITELY -maybe- just a shortcut fix? Look at ramifications
             }

@@ -1,5 +1,6 @@
 package com.example.testapp2;
 
+import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
 import com.example.testapp2.ui.gallery.LessonListFragment;
+import com.example.testapp2.ui.home.HomeFragment;
 import com.example.testapp2.ui.lesson.LessonFragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -32,12 +34,14 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
     public static NavController navController;
+    AppLifeCycleObserver appLifeCycleObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Custom here
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(appLifeCycleObserver); // For detecting when app is moved between foreground and background, etc
         AvatarSelectFragment.prepareAvatarData(getApplicationContext());
 
         String participantID = HelperCode.getSharedPrefsObj(getApplicationContext()).getString(GlobalVars.PARTICIPANT_ID_PREF_KEY, "");
@@ -52,6 +56,14 @@ public class MainActivity extends AppCompatActivity {
             DataTrackingManager.startTracking(getApplicationContext(), participantID);
         }
 
+        // if any of these are true, then it will have to pass over Home to go to the right place, but the user will not actually be seeing Home, so it should not be recorded
+        Intent prevIntent = getIntent();
+        if (prevIntent != null && prevIntent.getStringExtra("objectFound") != null ||
+                !HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.AVATAR_NAME_PREF_KEY) ||
+                !HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.PARTICIPANT_ID_PREF_KEY))
+        {
+            HomeFragment.passOverFragment();
+        }
 
         // End custom
 
@@ -100,21 +112,22 @@ public class MainActivity extends AppCompatActivity {
         // ^^^ Above is the default code
 
         // if ID hasn't been chosen yet, chose it now
-        if (!HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.PARTICIPANT_ID_PREF_KEY))
+        if (!HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.PARTICIPANT_ID_PREF_KEY)) {
             navController.navigate(R.id.nav_signIn);
+        }
         // if avatar hasn't been chosen yet, chose it now
-        else if (!HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.AVATAR_NAME_PREF_KEY))
+        else if (!HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.AVATAR_NAME_PREF_KEY)) {
             navController.navigate(R.id.nav_avatarSelect);
+        }
 
         Intent intent = getIntent();
         if (intent != null && intent.getStringExtra("objectFound") != null) { // This is true if you got here from clicking a notification
 //            Log.e("Stuff", "Should send to lesson now");
             long myImageID = intent.getLongExtra("myImageID", -1);
             long sessionID = intent.getLongExtra("sessionID", -1);
-            long notificationID = intent.getLongExtra("notificationID", -1);
+            String notificationID = intent.getStringExtra("notificationID");
             Log.e("Stuff", "Notif id found in intent: " + notificationID);
-            Log.e("Stuff", "Random num: " + intent.getLongExtra("randomNum", -1));
-            if (notificationID == -1) {
+            if (notificationID.equals("")) {
                 Log.e("Stuff", "No notificationID found in intent");
             }
             if (myImageID == -1) {
