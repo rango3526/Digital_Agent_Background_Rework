@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.FirebaseManager;
 import com.example.testapp2.HelperCode;
+import com.example.testapp2.LessonData;
 import com.example.testapp2.MainActivity;
 import com.example.testapp2.MyFragmentInterface;
 import com.example.testapp2.MyImage;
@@ -116,7 +117,7 @@ public class LessonFragment extends Fragment implements MyFragmentInterface {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 LessonListFragment.setImageBookmark(context, mi.imageID, isChecked);
-                DataTrackingManager.lessonBookmarked(mi.lessonID, isChecked);
+                DataTrackingManager.lessonBookmarked(mi.lessonData.lessonID, isChecked);
                 // TODO: Think: Lessons can be clicked on multiple times, creating multiple lesson entries
                 // so the bookmark will have multiple entries to find, meaning duplicate data
                 // But since each different lesson will theoretically be a different fact, we can't just make a
@@ -144,7 +145,7 @@ public class LessonFragment extends Fragment implements MyFragmentInterface {
     public void setLessonData(MyImage _mi) {
         context = getActivity();
         mi = _mi;
-        lessonID = mi.lessonID;
+        lessonID = mi.lessonData.lessonID;
     }
 
     @Override

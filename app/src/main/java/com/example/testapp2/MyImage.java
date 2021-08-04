@@ -10,16 +10,15 @@ public class MyImage {
     public String objectDetected;
     public final long imageID;
     public boolean bookmarked = false;
-    // This is associated with the page the lesson pops up on
-    public String lessonID;
+    public LessonData lessonData;
 
-    public MyImage(Uri uri, String name, int size, int dateTaken, String objectDetected, long imageID, String sessionID) {
+    public MyImage(Uri uri, String name, int size, int dateTaken, String objectDetected, long imageID, LessonData lessonData) {
         this.uriString = uri.toString();
         this.fileName = name;
         this.size = size;
         this.dateTaken = dateTaken;
         this.objectDetected = objectDetected;
         this.imageID = imageID;
-        this.lessonID = sessionID;
+        this.lessonData = lessonData;
     }
 }

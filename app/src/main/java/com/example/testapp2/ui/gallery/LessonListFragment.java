@@ -29,6 +29,7 @@ import com.example.testapp2.ObjectLesson;
 import com.example.testapp2.databinding.FragmentLessonListBinding;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class LessonListFragment extends Fragment implements MyFragmentInterface {
 
@@ -145,7 +146,7 @@ public class LessonListFragment extends Fragment implements MyFragmentInterface 
 //        ArrayList<MyImage> entireHistory = new ArrayList<>();
         entireHistory.add(mi);
 
-        sharedPreferences.edit().putString(GlobalVars.IMAGE_HISTORY_PREF_KEY, HelperCode.arrayListToJson(entireHistory)).apply();
+        setImageHistory(entireHistory);
     }
 
     public static void setImageBookmark(Context context, long imageID, boolean bookmarked) {
@@ -165,6 +166,10 @@ public class LessonListFragment extends Fragment implements MyFragmentInterface 
         if (!found)
             Log.e("Stuff", "No image found to bookmark with that ID!");
 
+        setImageHistory(entireHistory);
+    }
+
+    public static void setImageHistory(ArrayList<MyImage> entireHistory) {
         sharedPreferences.edit().putString(GlobalVars.IMAGE_HISTORY_PREF_KEY, HelperCode.arrayListToJson(entireHistory)).apply();
     }
 
@@ -198,6 +203,33 @@ public class LessonListFragment extends Fragment implements MyFragmentInterface 
 
         Log.e("Stuff", "That imageID was not found");
         throw new RuntimeException("imageID not found");
+    }
+
+    public static void setThisFactIndex(Context context, long imageID) {
+        if (sharedPreferences == null) {
+            sharedPreferences = HelperCode.getSharedPrefsObj(context);
+        }
+
+        ArrayList<MyImage> entireHistory = getImageHistory(context);
+
+        MyImage mi = null;
+        for (MyImage myImage : entireHistory) {
+            if (myImage.imageID == imageID) {
+                mi = myImage;
+            }
+        }
+
+        ObjectLesson objectLesson = FirebaseManager.getFirestoreObjectData(mi.objectDetected);
+
+        if (objectLesson == null) {
+            Log.e("Stuff", "Trying to set this fact index again");
+            HelperCode.callInSeconds(() -> setThisFactIndex(context, imageID), 0.25);
+            return;
+        }
+
+        mi.lessonData.thisFactIndex = Math.abs((new Random()).nextInt()) % objectLesson.getObjectFacts().size();
+
+        setImageHistory(entireHistory);
     }
 
     public static void trySetBookmarkFilter(boolean _onlyBookmarks) {

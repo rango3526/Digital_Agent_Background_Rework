@@ -2,18 +2,24 @@ package com.example.testapp2;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ObjectLesson {
     private String objectID;
     private String objectDisplayName;
-    private String objectDefinition;
+//    private String objectDefinition;
+    private ArrayList<String> facts;
     private String lessonTopic;
     private String videoLink;
 
     private HashMap<String, String> hashmapRepresentation;
 
-    public enum hashmapKeys {objectID, objectDisplayName, definition, lessonTopic, videoLink};
+    public ArrayList<String> getObjectFacts() {
+        return facts;
+    }
+
+    public enum hashmapKeys {objectID, objectDisplayName, facts, lessonTopic, videoLink};
 
     public HashMap<String, String> getHashmapRepresentation() {
         if (hashmapRepresentation == null) {
@@ -41,14 +47,14 @@ public class ObjectLesson {
         updateHashmapRepresentation();
     }
 
-    public String getObjectDefinition() {
-        return objectDefinition;
-    }
-
-    public void setObjectDefinition(String objectDefinition) {
-        this.objectDefinition = objectDefinition;
-        updateHashmapRepresentation();
-    }
+//    public String getObjectDefinition() {
+//        return objectDefinition;
+//    }
+//
+//    public void setObjectDefinition(String objectDefinition) {
+//        this.objectDefinition = objectDefinition;
+//        updateHashmapRepresentation();
+//    }
 
     public String getLessonTopic() {
         return lessonTopic;
@@ -74,23 +80,24 @@ public class ObjectLesson {
     public ObjectLesson() {
 
     }
+//
+//    public ObjectLesson(String objectID, String objectDisplayName, String objectDefinition, String lessonTopic, String videoLink) {
+//        this.objectID = objectID;
+//        this.objectDisplayName = objectDisplayName;
+//        this.objectDefinition = objectDefinition;
+//        this.lessonTopic = lessonTopic;
+//        this.videoLink = videoLink;
+//        updateHashmapRepresentation();
+//    }
 
-    public ObjectLesson(String objectID, String objectDisplayName, String objectDefinition, String lessonTopic, String videoLink) {
-        this.objectID = objectID;
-        this.objectDisplayName = objectDisplayName;
-        this.objectDefinition = objectDefinition;
-        this.lessonTopic = lessonTopic;
-        this.videoLink = videoLink;
-        updateHashmapRepresentation();
-    }
-
-    public ObjectLesson(HashMap<String,String> hashmap) {
+    public ObjectLesson(HashMap<String,Object> hashmap) {
         try {
-            this.objectID = hashmap.get(hashmapKeys.objectID.name());
-            this.objectDisplayName = hashmap.get(hashmapKeys.objectDisplayName.name());
-            this.objectDefinition = hashmap.get(hashmapKeys.definition.name());
-            this.lessonTopic = hashmap.get(hashmapKeys.lessonTopic.name());
-            this.videoLink = hashmap.get(hashmapKeys.videoLink.name());
+            this.objectID = (String) hashmap.get(hashmapKeys.objectID.name());
+            this.objectDisplayName = (String) hashmap.get(hashmapKeys.objectDisplayName.name());
+//            this.objectDefinition = hashmap.get(hashmapKeys.definition.name());
+            this.facts = (ArrayList<String>) hashmap.get(hashmapKeys.facts.name());
+            this.lessonTopic = (String) hashmap.get(hashmapKeys.lessonTopic.name());
+            this.videoLink = (String) hashmap.get(hashmapKeys.videoLink.name());
             updateHashmapRepresentation();
         }
         catch (Exception e) {
@@ -101,7 +108,7 @@ public class ObjectLesson {
     private void updateHashmapRepresentation() {
         HashMap<String,String> updatedHM = new HashMap<>();
         updatedHM.put(hashmapKeys.lessonTopic.name(), this.lessonTopic);
-        updatedHM.put(hashmapKeys.definition.name(), this.objectDefinition);
+//        updatedHM.put(hashmapKeys.definition.name(), this.objectDefinition);
         updatedHM.put(hashmapKeys.objectID.name(), this.objectID);
         updatedHM.put(hashmapKeys.objectDisplayName.name(), this.objectDisplayName);
         updatedHM.put(hashmapKeys.videoLink.name(), this.videoLink);

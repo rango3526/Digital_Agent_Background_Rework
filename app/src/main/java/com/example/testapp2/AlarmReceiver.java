@@ -56,8 +56,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    private static void sendNotification(Context context, MyImage mi, String lessonID) {
+    private static void sendNotification(Context context, MyImage mi) {
         String notificationID = HelperCode.generateLongID();
+        String lessonID = mi.lessonData.lessonID;
 
         Intent intent = AlarmReceiver.getIntentForObjectLesson(notificationID, lessonID, context, mi);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, (new Random().nextInt()), intent, 0);
@@ -136,7 +137,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 // Stores column values and the contentUri in a local object
                 // that represents the media file.
                 if (!idTable.containsKey(id)) {
-                    imageList.add(new MyImage(contentUri, name, size, dateTaken, "", id, HelperCode.generateLongID()));
+                    imageList.add(new MyImage(contentUri, name, size, dateTaken, "", id, null));
                     idTable.put(id, 1);
                 }
 //                Log.w("MyImage Stuff", contentUri.toString() + " " + name + " " + size + " " + dateTaken);
@@ -160,9 +161,10 @@ public class AlarmReceiver extends BroadcastReceiver {
                 mi.objectDetected = result;
                 String lessonID = HelperCode.generateLongID(); // origin of each lessonID
                 Log.e("Stuff", "Newly generated: " + lessonID);
-                mi.lessonID = lessonID;
+                mi.lessonData = new LessonData(lessonID);
                 LessonListFragment.addMyImage(context, mi);
-                sendNotification(context, mi, lessonID);
+                LessonListFragment.setThisFactIndex(context, mi.imageID);
+                sendNotification(context, mi);
                 DataTrackingManager.lessonDiscovered(lessonID, result);
             }
         }

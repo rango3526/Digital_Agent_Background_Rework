@@ -13,11 +13,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -29,7 +26,9 @@ import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 
 
@@ -40,7 +39,7 @@ public class FirebaseManager {
     static FirebaseFirestore firestoreReference;
     static FirebaseDatabase realtimeDatabase;
 
-    static HashMap<String, HashMap<String, String>> objectLessons = new HashMap<>();
+    static HashMap<String, HashMap<String, Object>> objectLessonsHashMap = new HashMap<>();
 
     public static void initFirebaseManager() {
         if (!initialized) {
@@ -137,17 +136,23 @@ public class FirebaseManager {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
+                    String docID = "";
                     for (QueryDocumentSnapshot document : task.getResult()) {
 //                        Log.d("FirestoreResult", document.getId() + " => " + document.getData());
                         //String[] values = {"objectDisplayName", "definition", "lessonTopic", "videoLink"};
-                        objectLessons.put(document.getId(), new HashMap<String, String>());
+                        docID = document.getId();
+                        objectLessonsHashMap.put(docID, new HashMap<String, Object>());
                         for (ObjectLesson.hashmapKeys enumVal : ObjectLesson.hashmapKeys.values()) {
                             if (enumVal == ObjectLesson.hashmapKeys.objectID) {
-                                objectLessons.get(document.getId()).put(enumVal.name(), (String) document.getId());
+                                objectLessonsHashMap.get(docID).put(enumVal.name(), (String) document.getId());
+                                continue;
+                            }
+                            if (enumVal == ObjectLesson.hashmapKeys.facts) {
+                                objectLessonsHashMap.get(docID).put(enumVal.name(), (ArrayList<String>) document.getData().get(enumVal.name()));
                                 continue;
                             }
 //                            Log.w("Firebase val", enumVal + ": " + (String) document.getData().get(enumVal.name()));
-                            objectLessons.get(document.getId()).put(enumVal.name(), (String) document.getData().get(enumVal.name()));
+                            objectLessonsHashMap.get(docID).put(enumVal.name(), (String) document.getData().get(enumVal.name()));
                         }
                     }
                 } else {
@@ -160,12 +165,12 @@ public class FirebaseManager {
     }
 
     public static boolean firestoreObjectNameExists(String objectName) {
-        return objectLessons.containsKey(objectName);
+        return objectLessonsHashMap.containsKey(objectName);
     }
 
     public static ObjectLesson getFirestoreObjectData(String objectName) {
         try {
-            HashMap<String, String> objectLessonHM = objectLessons.get(objectName);
+            HashMap<String, Object> objectLessonHM = objectLessonsHashMap.get(objectName);
             ObjectLesson ol = new ObjectLesson(objectLessonHM);
             return ol;
         }
