@@ -88,7 +88,7 @@ public class LessonListFragment extends Fragment implements MyFragmentInterface 
             }
         });
 
-        FirebaseManager.updateFirestoreObjectLessons();
+        FirebaseManager.updateFirestoreObjectLessons(context);
 
 
         return root;
@@ -223,11 +223,15 @@ public class LessonListFragment extends Fragment implements MyFragmentInterface 
 
         if (objectLesson == null) {
             Log.e("Stuff", "Trying to set this fact index again");
-            HelperCode.callInSeconds(() -> setThisFactIndex(context, imageID), 0.25);
+            HelperCode.callInSeconds(context, () -> setThisFactIndex(context, imageID), 0.25);
             return;
         }
 
-        mi.lessonData.thisFactIndex = Math.abs((new Random()).nextInt()) % objectLesson.getObjectFacts().size();
+        int lessonFactIndex = Math.abs((new Random()).nextInt()) % objectLesson.getObjectFacts().size();
+        mi.lessonData.thisFactIndex = lessonFactIndex
+        ;
+        String lessonFact = objectLesson.getObjectFacts().get(lessonFactIndex);
+        DataTrackingManager.lessonFactAssigned(mi.lessonData.lessonID, lessonFact);
 
         setImageHistory(entireHistory);
     }

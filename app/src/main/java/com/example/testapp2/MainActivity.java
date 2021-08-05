@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             DataTrackingManager.notificationClicked(notificationID);
         }
 
-        FirebaseManager.updateFirestoreObjectLessons();
+        FirebaseManager.updateFirestoreObjectLessons(getApplicationContext());
     }
 
     @Override

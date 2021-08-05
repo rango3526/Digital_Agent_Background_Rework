@@ -41,19 +41,127 @@ public class FirebaseManager {
 
     static HashMap<String, HashMap<String, Object>> objectLessonsHashMap = new HashMap<>();
 
-    public static void initFirebaseManager() {
+    public static void initFirebaseManager(Context context) {
         if (!initialized) {
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
             firestoreReference = FirebaseFirestore.getInstance();
             realtimeDatabase = FirebaseDatabase.getInstance();
             initialized = true;
+
+            String objectLessonsHashMapJson = HelperCode.getSharedPrefsObj(context).getString(GlobalVars.OBJECT_LESSONS_PREF_KEY, "");
+            if (!objectLessonsHashMapJson.equals("")) {
+                objectLessonsHashMap = HelperCode.jsonToObjectLessonsHashMap(objectLessonsHashMapJson);
+            }
         }
+    }
+
+    public static void updateFirestoreObjectLessons(Context context) {
+        initFirebaseManager(context);
+
+//        Log.w("Stuff", "Updating Firestore objectLessons...");
+
+        firestoreReference.collection("objectLessons").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    String docID = "";
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                        Log.d("FirestoreResult", document.getId() + " => " + document.getData());
+                        //String[] values = {"objectDisplayName", "definition", "lessonTopic", "videoLink"};
+                        docID = document.getId();
+                        objectLessonsHashMap.put(docID, new HashMap<String, Object>());
+                        for (ObjectLesson.hashmapKeys enumVal : ObjectLesson.hashmapKeys.values()) {
+                            if (enumVal == ObjectLesson.hashmapKeys.objectID) {
+                                objectLessonsHashMap.get(docID).put(enumVal.name(), (String) document.getId());
+                                continue;
+                            }
+                            if (enumVal == ObjectLesson.hashmapKeys.facts) {
+                                objectLessonsHashMap.get(docID).put(enumVal.name(), (ArrayList<String>) document.getData().get(enumVal.name()));
+                                continue;
+                            }
+//                            Log.w("Firebase val", enumVal + ": " + (String) document.getData().get(enumVal.name()));
+                            objectLessonsHashMap.get(docID).put(enumVal.name(), (String) document.getData().get(enumVal.name()));
+                        }
+                    }
+
+                    HelperCode.getSharedPrefsObj(context).edit().putString(GlobalVars.OBJECT_LESSONS_PREF_KEY, HelperCode.hashMapToJson(objectLessonsHashMap)).apply();
+                } else {
+                    Log.e("Stuff", "Error getting documents.", task.getException());
+                }
+            }
+        });
+
+//        Log.e("Stuff", "After update Firestore objectLessons");
+    }
+
+    public static boolean firestoreObjectNameExists(String objectName) {
+        return objectLessonsHashMap.containsKey(objectName);
+    }
+
+    public static ObjectLesson getFirestoreObjectData(String objectName) {
+        try {
+            HashMap<String, Object> objectLessonHM = objectLessonsHashMap.get(objectName);
+            ObjectLesson ol = new ObjectLesson(objectLessonHM);
+            return ol;
+        }
+        catch (Exception e) {
+            Log.e("Firebase stuff", "Hashmap null, internet probably bad");
+            return null;
+        }
+    }
+
+    public static void populateManagerDTM(Context context, String participantID) {
+        initFirebaseManager(context);
+
+        DataTrackingManager.lockUpload();
+        DataTrackingModel dtm = new DataTrackingModel();
+        dtm.setParticipantID(participantID);
+        dtm.setParticipantName("Firstname Lastname");
+        dtm.setTimeAppFirstStarted(String.valueOf(System.currentTimeMillis()));
+        DataTrackingManager.setDTM(dtm);
+        // This will be overwritten/merged when the below code runs (asynchronously)
+        // If the code below finds no previous DTM stored in Firebase, then this is the default and will be kept as-is
+
+        DatabaseReference dbRef = realtimeDatabase.getReference("dataTracking").child(participantID);
+        dbRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DataSnapshot snapshot = task.getResult();
+                    Log.e("Stuff", "Data change event; populating DTM...");
+                    if (!snapshot.exists()) {
+                        Log.e("Stuff", "No records on firebase, so default DTM will be used");
+                        DataTrackingManager.unlockUpload();
+                        DataTrackingManager.dtmChanged(context);
+                        return;
+                    }
+                    DataTrackingModel onlineDtm = snapshot.getValue(DataTrackingModel.class);
+                    Log.e("Stuff", "Online DTM is: " + (new Gson().toJson(onlineDtm)));
+                    // Merges the offline version with the online version, once online is retrieved
+                    DataTrackingManager.unlockUpload();
+                    // TODO: Fix merge! For some reason it deletes all previous history when merging!
+                    DataTrackingManager.setDTM(DataTrackingManager.mergeDtms(onlineDtm, DataTrackingManager.getDTM()));
+                    Log.e("Stuff", "DTMs done merging and DTM is set");
+                }
+                else {
+                    Log.e("Stuff", "Realtime database access failed; trying again");
+                    populateManagerDTM(context, participantID);
+                }
+            }
+        });
+
+    }
+
+    public static void uploadDTM(Context context, DataTrackingModel dtm) {
+        initFirebaseManager(context);
+
+        realtimeDatabase.getReference("dataTracking").child(dtm.getParticipantID()).setValue(dtm);
     }
 
     private static void uploadImage(Uri filePath, Context context, String name)
     {
-        initFirebaseManager();
+        initFirebaseManager(context);
 
         if (filePath != null) {
 
@@ -125,126 +233,5 @@ public class FirebaseManager {
                                 }
                             });
         }
-    }
-
-    public static void updateFirestoreObjectLessons() {
-        initFirebaseManager();
-
-//        Log.w("Stuff", "Updating Firestore objectLessons...");
-
-        firestoreReference.collection("objectLessons").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    String docID = "";
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-//                        Log.d("FirestoreResult", document.getId() + " => " + document.getData());
-                        //String[] values = {"objectDisplayName", "definition", "lessonTopic", "videoLink"};
-                        docID = document.getId();
-                        objectLessonsHashMap.put(docID, new HashMap<String, Object>());
-                        for (ObjectLesson.hashmapKeys enumVal : ObjectLesson.hashmapKeys.values()) {
-                            if (enumVal == ObjectLesson.hashmapKeys.objectID) {
-                                objectLessonsHashMap.get(docID).put(enumVal.name(), (String) document.getId());
-                                continue;
-                            }
-                            if (enumVal == ObjectLesson.hashmapKeys.facts) {
-                                objectLessonsHashMap.get(docID).put(enumVal.name(), (ArrayList<String>) document.getData().get(enumVal.name()));
-                                continue;
-                            }
-//                            Log.w("Firebase val", enumVal + ": " + (String) document.getData().get(enumVal.name()));
-                            objectLessonsHashMap.get(docID).put(enumVal.name(), (String) document.getData().get(enumVal.name()));
-                        }
-                    }
-                } else {
-                    Log.e("Stuff", "Error getting documents.", task.getException());
-                }
-            }
-        });
-
-//        Log.e("Stuff", "After update Firestore objectLessons");
-    }
-
-    public static boolean firestoreObjectNameExists(String objectName) {
-        return objectLessonsHashMap.containsKey(objectName);
-    }
-
-    public static ObjectLesson getFirestoreObjectData(String objectName) {
-        try {
-            HashMap<String, Object> objectLessonHM = objectLessonsHashMap.get(objectName);
-            ObjectLesson ol = new ObjectLesson(objectLessonHM);
-            return ol;
-        }
-        catch (Exception e) {
-            Log.e("Firebase stuff", "Hashmap null, internet probably bad");
-            return null;
-        }
-    }
-
-    public static void populateManagerDTM(String participantID) {
-        initFirebaseManager();
-
-        // This will be overwritten/merged when the below code runs (asynchronously)
-        // If the code below finds no previous DTM stored in Firebase, then this is the default and will be kept as-is
-        DataTrackingManager.lockUpload();
-        DataTrackingModel dtm = new DataTrackingModel();
-        dtm.setParticipantID(participantID);
-        dtm.setParticipantName("Firstname Lastname");
-        dtm.setTimeAppFirstStarted(String.valueOf(System.currentTimeMillis()));
-        DataTrackingManager.setDTM(dtm);
-
-        DatabaseReference dbRef = realtimeDatabase.getReference("dataTracking").child(participantID);
-        dbRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull @NotNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DataSnapshot snapshot = task.getResult();
-                    Log.e("Stuff", "Data change event; populating DTM...");
-                    if (!snapshot.exists()) {
-                        Log.e("Stuff", "No records on firebase, so default DTM will be used");
-                        DataTrackingManager.unlockUpload();
-                        DataTrackingManager.dtmChanged();
-                        return;
-                    }
-                    DataTrackingModel onlineDtm = snapshot.getValue(DataTrackingModel.class);
-                    Log.e("Stuff", "Online DTM is: " + (new Gson().toJson(onlineDtm)));
-                    // Merges the offline version with the online version, once online is retrieved
-                    DataTrackingManager.unlockUpload();
-                    // TODO: Fix merge! For some reason it deletes all previous history when merging!
-                    DataTrackingManager.setDTM(DataTrackingManager.mergeDtms(onlineDtm, DataTrackingManager.getDTM()));
-                    Log.e("Stuff", "DTMs done merging and DTM is set");
-                }
-                else {
-                    Log.e("Stuff", "Realtime database access failed; trying again");
-                    populateManagerDTM(participantID);
-                }
-            }
-        });
-
-//        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-//                Log.e("Stuff", "Data change event; populating DTM...");
-//                if (!snapshot.exists()) {
-//                    return;
-//                }
-//                DataTrackingModel dtm = snapshot.getValue(DataTrackingModel.class);
-//                // Merges the offline version with the online version, once online is retrieved
-//                DataTrackingManager.unlockUpload();
-//                DataTrackingManager.setDTM(DataTrackingManager.mergeDtms(dtm, DataTrackingManager.getDTM()));
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-//                Log.e("Stuff", "Realtime database access failed; trying again");
-//                populateManagerDTM(participantID);
-//            }
-//        });
-
-    }
-
-    public static void uploadDTM(DataTrackingModel dtm) {
-        initFirebaseManager();
-
-        realtimeDatabase.getReference("dataTracking").child(dtm.getParticipantID()).setValue(dtm);
     }
 }

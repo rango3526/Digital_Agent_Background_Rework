@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -29,6 +30,8 @@ public class HelperCode {
     public static PendingIntent alarmPendingIntent;
     public static AlarmManager alarmManager;
     public static Random random;
+
+    private static HashMap<String, Integer> callInSecondsHashMap = new HashMap<String, Integer>();
 
     public static Bitmap GetBitmapFromUri(Context context, Uri imageUri) {
         Bitmap bitmap = null;
@@ -57,17 +60,6 @@ public class HelperCode {
         return json;
     }
 
-    public static ArrayList<MyImage> reverseMyImageList(ArrayList<MyImage> al) {
-        ArrayList<MyImage> reversedList = new ArrayList<>();
-        int size = al.size();
-
-        for (int i = 0; i < size; i++) {
-            reversedList.add(al.get(size-i-1));
-        }
-
-        return reversedList;
-    }
-
     public static ArrayList<MyImage> jsonToMyImageArrayList(String json) {
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<MyImage>>() {}.getType();
@@ -78,6 +70,27 @@ public class HelperCode {
             arrayList = new ArrayList<>();
 
         return arrayList;
+    }
+
+    public static <T, V> String hashMapToJson(HashMap<T, V> hashMap) {
+        Gson gson = new Gson();
+        String json = gson.toJson(hashMap);
+
+//        Log.w("Stuff", "Json is: " + json);
+
+        return json;
+    }
+
+    public static HashMap<String, HashMap<String, Object>> jsonToObjectLessonsHashMap(String json) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<HashMap<String, HashMap<String, Object>>>() {}.getType();
+
+        HashMap<String, HashMap<String, Object>> objectLessonsHashMap = gson.fromJson(json, type);
+
+        if (objectLessonsHashMap == null)
+            objectLessonsHashMap = new HashMap<String, HashMap<String, Object>>();
+
+        return objectLessonsHashMap;
     }
 
     public static String capitalizeFirstLetter(String text) {
@@ -128,7 +141,24 @@ public class HelperCode {
         return String.valueOf(random.nextLong());
     }
 
-    public static void callInSeconds(Runnable f, double seconds) {
+    public static void callInSeconds(Context context, Runnable f, double seconds) {
+        callInSeconds(context, f, seconds, "", -1);
+    }
+
+    public static void callInSeconds(Context context, Runnable f, double seconds, String messageAfterFailure, double secondsToMessageSend) {
+//        if (messageAfterFailure != "" && secondsToMessageSend > 0) {
+//            Integer existingNum = callInSecondsHashMap.get(f.toString());
+//            if (existingNum == null)
+//                existingNum = 0;
+//
+//            callInSecondsHashMap.put(f.toString(), existingNum + 1);
+//
+//            if (existingNum*seconds >= secondsToMessageSend) {
+//                Toast.makeText(context, messageAfterFailure, Toast.LENGTH_LONG).show();
+//            }
+//        }
+        // TODO: Make this part work; it should allow for a message to be Toasted to users after a certain number of seconds of failures (or retries at least)
+
         new java.util.Timer().schedule(
                 new java.util.TimerTask() {
                     @Override

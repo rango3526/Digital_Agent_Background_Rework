@@ -7,6 +7,9 @@ public class GlobalVars {
     public static final String IMAGE_HISTORY_PREF_KEY = "MyImageHistory";
     public static final String AVATAR_NAME_PREF_KEY = "AvatarName";
     public static final String PARTICIPANT_ID_PREF_KEY = "ParticipantID";
+    public static final String OBJECT_LESSONS_PREF_KEY = "ObjectLessons";
+
+    public static final String BAD_INTERNET_CONNECTION_DISPLAY_MESSAGE = "Please check your internet connection and try again";
 
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1231231551;
 }

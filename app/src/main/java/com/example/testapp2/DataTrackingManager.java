@@ -17,10 +17,12 @@ public class DataTrackingManager {
 
     private static Context context;
 
+    // TODO: cache DTM in shared preferences
+
     public static void startTracking(Context _context, String participantID) {
         context = _context;
         HelperCode.getSharedPrefsObj(context).edit().putString(GlobalVars.PARTICIPANT_ID_PREF_KEY, participantID).apply();
-        FirebaseManager.populateManagerDTM(participantID);
+        FirebaseManager.populateManagerDTM(context, participantID);
         currentlyTracking = true;
     }
 
@@ -28,9 +30,9 @@ public class DataTrackingManager {
         currentlyTracking = false;
     }
 
-    public static void dtmChanged() {
+    public static void dtmChanged(Context context) {
         if (!uploadLocked)
-            FirebaseManager.uploadDTM(dtm);
+            FirebaseManager.uploadDTM(context, dtm);
     }
 
     public static void pageChange(MyFragmentInterface obj, String sessionID, String pageName, String lessonID) {
@@ -59,7 +61,7 @@ public class DataTrackingManager {
 
         if (dtm == null) { // If the dtm hasn't been created (so the system hasn't had time to connect to firebase yet), it will just keep waiting until it does
             Log.e("Stuff", "Waiting 1 second and trying again");
-            HelperCode.callInSeconds(() -> pageChange(obj, sessionID, entryTime, millisecondsOnPage, pageName, lessonID), 1);
+            HelperCode.callInSeconds(context, () -> pageChange(obj, sessionID, entryTime, millisecondsOnPage, pageName, lessonID), 1);
             return;
         }
         Log.e("Stuff", "Page change info being added to DTM");
@@ -74,7 +76,7 @@ public class DataTrackingManager {
         pe.lessonID = lessonID;
         dtm.pushToPageHistory(pe);
 
-        dtmChanged();
+        dtmChanged(context);
     }
 
     public static void avatarChosen(String avatarName) {
@@ -89,7 +91,7 @@ public class DataTrackingManager {
         avatarEntry.endTime = "";
         dtm.pushToAvatarHistory(avatarEntry);
 
-        dtmChanged();
+        dtmChanged(context);
     }
 
     public static void lessonBookmarked(String lessonID, boolean isNowBookmarked) { // TODO: actually call this function, requires rework of the way Lessons get assigned sessionIDs
@@ -109,7 +111,25 @@ public class DataTrackingManager {
             }
         }
 
-        dtmChanged();
+        dtmChanged(context);
+    }
+
+    public static void lessonFactAssigned(String lessonID, String fact) {
+        // No check for currently tracking because this is just updating a previously tracked item
+        //
+        // The only reason this is needed is because this fact isn't assigned until the lesson is viewed,
+        // but it could've been assigned any time (like at its "discovery")
+
+        ArrayList<DataTrackingModel.LessonEntry> lessonHistory = dtm.getLessonsDiscovered();
+
+        for (DataTrackingModel.LessonEntry lessonEntry : lessonHistory) {
+            if (lessonEntry.lessonID.equals(lessonID)) {
+                lessonEntry.fact = fact;
+                break;
+            }
+        }
+
+        dtmChanged(context);
     }
 
     public static void lessonDiscovered(String lessonID, String objectDetected) { // when the system finds this object in a photo
@@ -125,7 +145,7 @@ public class DataTrackingManager {
         lessonEntry.lessonID = lessonID;
         dtm.pushToLessonsDiscovered(lessonEntry);
 
-        dtmChanged();
+        dtmChanged(context);
     }
 
     public static void notificationSent(String notificationID, String sessionID, Intent intent) {
@@ -140,7 +160,7 @@ public class DataTrackingManager {
         notificationEntry.sentTime = String.valueOf(System.currentTimeMillis());
         dtm.pushToNotificationClickedHistory(notificationEntry);
 
-        dtmChanged();
+        dtmChanged(context);
     }
 
     public static void notificationClicked(String notificationID) {
@@ -167,7 +187,7 @@ public class DataTrackingManager {
             dtm.pushToNotificationClickedHistory(notificationEntry);
         }
 
-        dtmChanged();
+        dtmChanged(context);
     }
 
     public static void appMovedToForeground() {
@@ -183,7 +203,7 @@ public class DataTrackingManager {
 
         if (dtm == null) {
             Log.e("Stuff", "Trying foreground again");
-            HelperCode.callInSeconds(() -> appMovedToForeground(entryTime), 1);
+            HelperCode.callInSeconds(context, () -> appMovedToForeground(entryTime), 1);
             return;
         }
 
@@ -194,7 +214,7 @@ public class DataTrackingManager {
 
         reinitializeTrackingOfCurrentPage();
 
-        dtmChanged();
+        dtmChanged(context);
     }
 
     private static void reinitializeTrackingOfCurrentPage() {
@@ -217,7 +237,7 @@ public class DataTrackingManager {
 
         if (dtm == null) {
             Log.e("Stuff", "Trying foreground again");
-            HelperCode.callInSeconds(() -> appMovedToBackground(entryTime), 1);
+            HelperCode.callInSeconds(context, () -> appMovedToBackground(entryTime), 1);
             return;
         }
 
@@ -225,7 +245,7 @@ public class DataTrackingManager {
         finishPrevAvatar();
         finishPrevAppUse();
 
-        dtmChanged();
+        dtmChanged(context);
     }
 
     public static void stopRefreshClicked(String sessionID) {
@@ -237,12 +257,12 @@ public class DataTrackingManager {
         stopRefreshEntry.sessionID = sessionID;
         dtm.pushToStopRefreshEntryHistory(stopRefreshEntry);
 
-        dtmChanged();
+        dtmChanged(context);
     }
 
     public static void setDTM(DataTrackingModel _dtm) {
         dtm = _dtm;
-        dtmChanged();
+        dtmChanged(context);
     }
 
     public static DataTrackingModel getDTM() {
@@ -258,7 +278,7 @@ public class DataTrackingManager {
         forgetLessonsEntry.sessionID = sessionID;
         dtm.pushToForgetLessonsHistory(forgetLessonsEntry);
 
-        dtmChanged();
+        dtmChanged(context);
     }
 
     public static void lessonInterestingClick(String lessonID, boolean interesting) {
@@ -272,7 +292,7 @@ public class DataTrackingManager {
             }
         }
 
-        dtmChanged();
+        dtmChanged(context);
     }
 
     public static void finishPrevPage() {

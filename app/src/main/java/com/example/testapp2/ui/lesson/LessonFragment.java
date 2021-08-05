@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.testapp2.DataTrackingManager;
 import com.example.testapp2.FirebaseManager;
+import com.example.testapp2.GlobalVars;
 import com.example.testapp2.HelperCode;
 import com.example.testapp2.LessonData;
 import com.example.testapp2.MainActivity;
@@ -65,13 +66,43 @@ public class LessonFragment extends Fragment implements MyFragmentInterface {
 
         // ^^^ Default stuff
         context = getActivity();
-        ObjectLesson ol = FirebaseManager.getFirestoreObjectData(mi.objectDetected);
 
         if (sessionID.equals(""))
             sessionID = HelperCode.generateLongID();
         notifyTrackerOfPage();
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+
+        populateUI(context);
+
+        return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    public void setLessonData(MyImage _mi) {
+        context = getActivity();
+        mi = _mi;
+        lessonID = mi.lessonData.lessonID;
+    }
+
+    @Override
+    public void notifyTrackerOfPage() {
+        DataTrackingManager.pageChange(this, sessionID, "Lesson", lessonID);
+    }
+
+    public void populateUI(Context context) {
+        ObjectLesson ol = FirebaseManager.getFirestoreObjectData(mi.objectDetected);
+
+        if (ol == null) {
+            Log.e("Stuff", "Trying again to populate the LessonFragment UI; need internet");
+            HelperCode.callInSeconds(context, () -> populateUI(context), 0.25, GlobalVars.BAD_INTERNET_CONNECTION_DISPLAY_MESSAGE, 5);
+            return;
+        }
 
         fragmentManager = getActivity().getSupportFragmentManager();
 
@@ -93,15 +124,6 @@ public class LessonFragment extends Fragment implements MyFragmentInterface {
         binding.learnMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ol == null) {
-                    Toast.makeText(context, "Check your internet connection and try again (restart app)", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-//                Intent intent = new Intent(context, LearnMoreFragment.class);
-//                intent.putExtra("objectLessonHashmap", ol.getHashmapRepresentation());
-//                intent.putExtra("myImageID", mi.imageID);
-//                startActivity(intent);
 
                 LearnMoreFragment learnMoreFragment = new LearnMoreFragment();
                 learnMoreFragment.setData(ol, mi);
@@ -132,25 +154,6 @@ public class LessonFragment extends Fragment implements MyFragmentInterface {
         });
 
         binding.avatarImageView.setImageURI(AvatarSelectFragment.getCurAvatar(getActivity()).getImageUri());
-
-        return root;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
-    public void setLessonData(MyImage _mi) {
-        context = getActivity();
-        mi = _mi;
-        lessonID = mi.lessonData.lessonID;
-    }
-
-    @Override
-    public void notifyTrackerOfPage() {
-        DataTrackingManager.pageChange(this, sessionID, "Lesson", lessonID);
     }
 
 //    public void setSessionID(long _sessionID) {

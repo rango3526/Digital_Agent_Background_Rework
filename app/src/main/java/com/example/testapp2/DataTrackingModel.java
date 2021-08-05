@@ -132,6 +132,7 @@ public class DataTrackingModel {
 
     public static class LessonEntry {
         public String objectDetected = "";
+        public String fact = "";
         public String lessonID = "";
         public String discoverTime = "";
         public String foundInteresting = "";

@@ -204,7 +204,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 sharedPreferences.edit().putLong(GlobalVars.LATEST_DATE_PREF_KEY, latestDate).apply();
                 analyzeImages(context, newlyTaken);
 
-                FirebaseManager.updateFirestoreObjectLessons();
+                FirebaseManager.updateFirestoreObjectLessons(context);
             }
         }).start();
     }
