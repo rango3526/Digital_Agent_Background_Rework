@@ -11,24 +11,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="56dp"
+        android:layout_marginTop="12dp"
         android:backgroundTint="@color/deep_blue"
         android:text="Change avatar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stopAnalyzing" />
+        app:layout_constraintTop_toBottomOf="@+id/appRefreshToggle" />
 
-    <Button
-        android:id="@+id/stopAnalyzing"
+    <Switch
+        android:id="@+id/appRefreshToggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="80dp"
-        android:backgroundTint="@color/deep_blue"
-        android:text="Pause App"
+        android:layout_marginTop="24dp"
+        android:checked="true"
+        android:text="App refresh:"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

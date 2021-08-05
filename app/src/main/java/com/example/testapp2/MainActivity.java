@@ -1,11 +1,19 @@
 package com.example.testapp2;
 
 import androidx.lifecycle.ProcessLifecycleOwner;
+
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -119,6 +127,29 @@ public class MainActivity extends AppCompatActivity {
         else if (!HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.AVATAR_NAME_PREF_KEY)) {
             navController.navigate(R.id.nav_avatarSelect);
         }
+        // Make sure we have the right permissions to access photos in  the background
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                Toast.makeText(getApplicationContext(), "Please allow access to continue", Toast.LENGTH_LONG).show();
+                HelperCode.callInSeconds(getApplicationContext(), () -> askForExternalStoragePermission(), 2);
+            }
+        }
+        else if (getApplicationContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Explain to the user why we need to read the contacts
+            }
+
+            Toast.makeText(getApplicationContext(), "Please allow access to continue", Toast.LENGTH_LONG).show();
+            HelperCode.callInSeconds(getApplicationContext(), () -> requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    GlobalVars.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE), 2);
+            ;
+
+            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
+            // app-defined int constant that should be quite unique
+        }
 
         Intent intent = getIntent();
         if (intent != null && intent.getStringExtra("objectFound") != null) { // This is true if you got here from clicking a notification
@@ -131,8 +162,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("Stuff", "No notificationID found in intent");
             }
             if (myImageID == -1) {
-                throw new RuntimeException("Did not find proper image ID in notification intent");
+//                throw new RuntimeException("Did not find proper image ID in notification intent");
+                Log.e("Stuff", "Something apparently really bad: Did not find proper image ID in notification intent");
             }
+
             MyImage curImage = LessonListFragment.getMyImageByID(getApplicationContext(), myImageID);
             LessonFragment lessonFragment = new LessonFragment();
             lessonFragment.setLessonData(curImage);
@@ -162,6 +195,18 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    private void askForExternalStoragePermission() {
+        String appID = BuildConfig.APPLICATION_ID;
+        Uri uri = Uri.parse("package:"+appID);
+
+        startActivity(
+                new Intent(
+                        Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                        uri
+                )
+        );
     }
 
     // TODO: this; need to find this class implementation online: https://stackoverflow.com/questions/5593115/run-code-when-android-app-is-closed-sent-to-background

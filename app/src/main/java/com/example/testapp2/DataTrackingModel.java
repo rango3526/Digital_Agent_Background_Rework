@@ -62,12 +62,12 @@ public class DataTrackingModel {
         this.lessonsDiscovered = lessonsDiscovered;
     }
 
-    public ArrayList<StopRefreshEntry> getStopRefreshHistory() {
-        return stopRefreshHistory;
+    public ArrayList<AppRefreshEntry> getAppRefreshHistory() {
+        return appRefreshHistory;
     }
 
-    public void setStopRefreshHistory(ArrayList<StopRefreshEntry> stopRefreshHistory) {
-        this.stopRefreshHistory = stopRefreshHistory;
+    public void setAppRefreshHistory(ArrayList<AppRefreshEntry> appRefreshHistory) {
+        this.appRefreshHistory = appRefreshHistory;
     }
 
     public ArrayList<AppUseEntry> getAppUseHistory() {
@@ -102,8 +102,8 @@ public class DataTrackingModel {
         lessonsDiscovered.add(lessonEntry);
     }
 
-    public void pushToStopRefreshEntryHistory(StopRefreshEntry stopRefreshEntry) {
-        stopRefreshHistory.add(stopRefreshEntry);
+    public void pushToAppRefreshEntryHistory(AppRefreshEntry stopRefreshEntry) {
+        appRefreshHistory.add(stopRefreshEntry);
     }
 
     public void pushToForgetLessonsHistory(ForgetLessonsEntry forgetLessonsEntry) {
@@ -116,7 +116,6 @@ public class DataTrackingModel {
 
     public static class AvatarEntry {
         public String avatarName = "";
-        public String endTime = "";
         public String entryTime = "";
     }
     private ArrayList<AvatarEntry> avatarHistory = new ArrayList<>();
@@ -145,11 +144,12 @@ public class DataTrackingModel {
     }
     private ArrayList<LessonEntry> lessonsDiscovered = new ArrayList<>();
 
-    public static class StopRefreshEntry {
+    public static class AppRefreshEntry {
         public String entryTime = "";
         public String sessionID = "";
+        public String onOrOff = "";
     }
-    private ArrayList<StopRefreshEntry> stopRefreshHistory = new ArrayList<>();
+    private ArrayList<AppRefreshEntry> appRefreshHistory = new ArrayList<>();
 
     public static class ForgetLessonsEntry {
         public String entryTime = "";

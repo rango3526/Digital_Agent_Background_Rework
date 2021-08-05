@@ -18,6 +18,7 @@ public class AppLifeCycleObserver extends Application implements LifecycleObserv
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onEnterForeground() {
         isAppInBackground(false);
+        AlarmReceiver.alarmTriggered(context);
         DataTrackingManager.appMovedToForeground();
 //        Toast.makeText(context, "App enter foreground", Toast.LENGTH_SHORT).show();
 //        Log.e("Stuff", "ENTER FOREGROUND");

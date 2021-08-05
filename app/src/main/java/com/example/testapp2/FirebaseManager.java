@@ -41,6 +41,8 @@ public class FirebaseManager {
 
     static HashMap<String, HashMap<String, Object>> objectLessonsHashMap = new HashMap<>();
 
+    static boolean firestoreObjectLessonsGathered = false; // Means that it has stored ObjectLesson data from the database (aka it's not going to be null or something bad)
+
     public static void initFirebaseManager(Context context) {
         if (!initialized) {
             storage = FirebaseStorage.getInstance();
@@ -52,6 +54,7 @@ public class FirebaseManager {
             String objectLessonsHashMapJson = HelperCode.getSharedPrefsObj(context).getString(GlobalVars.OBJECT_LESSONS_PREF_KEY, "");
             if (!objectLessonsHashMapJson.equals("")) {
                 objectLessonsHashMap = HelperCode.jsonToObjectLessonsHashMap(objectLessonsHashMapJson);
+                firestoreObjectLessonsGathered = true;
             }
         }
     }
@@ -85,6 +88,7 @@ public class FirebaseManager {
                         }
                     }
 
+                    firestoreObjectLessonsGathered = true;
                     HelperCode.getSharedPrefsObj(context).edit().putString(GlobalVars.OBJECT_LESSONS_PREF_KEY, HelperCode.hashMapToJson(objectLessonsHashMap)).apply();
                 } else {
                     Log.e("Stuff", "Error getting documents.", task.getException());
@@ -93,6 +97,10 @@ public class FirebaseManager {
         });
 
 //        Log.e("Stuff", "After update Firestore objectLessons");
+    }
+
+    public static boolean firestoreObjectLessonsGathered() {
+        return firestoreObjectLessonsGathered;
     }
 
     public static boolean firestoreObjectNameExists(String objectName) {

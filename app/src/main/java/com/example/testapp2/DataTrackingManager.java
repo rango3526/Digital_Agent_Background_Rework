@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class DataTrackingManager {
 
     private static DataTrackingModel dtm;
-    private static boolean currentlyTracking = true;
+    private static boolean currentlyTracking = false;
     // Uploading DTM is locked until it has synced with the Firebase
     private static boolean uploadLocked = true;
 
@@ -83,12 +83,9 @@ public class DataTrackingManager {
         if (!currentlyTracking)
             return;
 
-        finishPrevAvatar();
-
         DataTrackingModel.AvatarEntry avatarEntry = new DataTrackingModel.AvatarEntry();
         avatarEntry.avatarName = avatarName;
         avatarEntry.entryTime = String.valueOf(System.currentTimeMillis());
-        avatarEntry.endTime = "";
         dtm.pushToAvatarHistory(avatarEntry);
 
         dtmChanged(context);
@@ -242,7 +239,6 @@ public class DataTrackingManager {
         }
 
         finishPrevPage();
-        finishPrevAvatar();
         finishPrevAppUse();
 
         dtmChanged(context);
@@ -252,10 +248,24 @@ public class DataTrackingManager {
         if (!currentlyTracking)
             return;
 
-        DataTrackingModel.StopRefreshEntry stopRefreshEntry = new DataTrackingModel.StopRefreshEntry();
-        stopRefreshEntry.entryTime = String.valueOf(System.currentTimeMillis());
-        stopRefreshEntry.sessionID = sessionID;
-        dtm.pushToStopRefreshEntryHistory(stopRefreshEntry);
+        DataTrackingModel.AppRefreshEntry appRefreshEntry = new DataTrackingModel.AppRefreshEntry();
+        appRefreshEntry.entryTime = String.valueOf(System.currentTimeMillis());
+        appRefreshEntry.sessionID = sessionID;
+        appRefreshEntry.onOrOff = "off";
+        dtm.pushToAppRefreshEntryHistory(appRefreshEntry);
+
+        dtmChanged(context);
+    }
+
+    public static void resumeRefreshClicked(String sessionID) {
+        if (!currentlyTracking)
+            return;
+
+        DataTrackingModel.AppRefreshEntry appRefreshEntry = new DataTrackingModel.AppRefreshEntry();
+        appRefreshEntry.entryTime = String.valueOf(System.currentTimeMillis());
+        appRefreshEntry.sessionID = sessionID;
+        appRefreshEntry.onOrOff = "on";
+        dtm.pushToAppRefreshEntryHistory(appRefreshEntry);
 
         dtmChanged(context);
     }
@@ -304,14 +314,15 @@ public class DataTrackingManager {
         }
     }
 
-    public static void finishPrevAvatar() {
-        if (dtm.getAvatarHistory().size() > 0) { // Since prev is ending, set its duration in tracking data
-            int index = dtm.getAvatarHistory().size()-1;
-            DataTrackingModel.AvatarEntry prevAvatarEntry = dtm.getAvatarHistory().get(index);
-            if (prevAvatarEntry.endTime.equals(""))
-                prevAvatarEntry.endTime = String.valueOf(System.currentTimeMillis());
-        }
-    }
+//    public static void finishPrevAvatar() {
+//        if (dtm.getAvatarHistory().size() > 0) { // Since prev is ending, set its duration in tracking data
+//            int index = dtm.getAvatarHistory().size()-1;
+//            DataTrackingModel.AvatarEntry prevAvatarEntry = dtm.getAvatarHistory().get(index);
+//            if (prevAvatarEntry.endTime.equals(""))
+//                prevAvatarEntry.endTime = String.valueOf(System.currentTimeMillis());
+//        }
+//    }
+    // Really no need to signify the end of an avatar since the end of one is always the start of another
 
     public  static void finishPrevAppUse() {
         if (dtm.getAppUseHistory().size() > 0) {

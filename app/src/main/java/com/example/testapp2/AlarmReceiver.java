@@ -57,6 +57,11 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private static void sendNotification(Context context, MyImage mi) {
+        if (!FirebaseManager.firestoreObjectLessonsGathered()) {
+            HelperCode.callInSeconds(context, () -> sendNotification(context, mi), 5);
+            return;
+        }
+
         String notificationID = HelperCode.generateLongID();
         String lessonID = mi.lessonData.lessonID;
 
@@ -171,6 +176,13 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     public static void alarmTriggered(Context context) {
+        if (!FirebaseManager.firestoreObjectLessonsGathered()) { // Needs to have this info to do a lot of things; this will prevent bugs
+//            HelperCode.callInSeconds(context, () -> alarmTriggered(context), 5);
+            // Probably no need to call callInSeconds since it's already on an alarm
+            FirebaseManager.updateFirestoreObjectLessons(context);
+            return;
+        }
+
         new Thread(new Runnable() { // Executes in worker thread so it doesn't block the main/ui thread
             public void run() {
                 long latestDate = 0;
@@ -221,5 +233,3 @@ public class AlarmReceiver extends BroadcastReceiver {
         return intent;
     }
 }
-
-// TODO: Making sure lessonDiscovered isn't called randomly!!!

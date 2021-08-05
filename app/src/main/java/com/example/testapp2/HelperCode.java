@@ -104,6 +104,10 @@ public class HelperCode {
     }
 
     public static void setTestAlarm(Context context) {
+        if (!HelperCode.getSharedPrefsObj(context).getBoolean(GlobalVars.APP_REFRESH_SETTING_PREF_KEY, true)) {
+            return;
+        }
+
         AlarmReceiver.alarmTriggered(context);
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5000, 5000, alarmPendingIntent);
 //        Toast.makeText(context,"I'll analyze your photos periodically in the background", Toast.LENGTH_SHORT).show();

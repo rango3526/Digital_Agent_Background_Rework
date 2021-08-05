@@ -84,6 +84,7 @@ public class LessonListFragment extends Fragment implements MyFragmentInterface 
             public void onClick(View v) {
                 DataTrackingManager.forgetLessonsClicked(sessionID);
                 LessonListFragment.clearImageHistory(context);
+                initRecyclerView(context, getActivity().getSupportFragmentManager(), onlyBookmarks);
                 // TODO: make page refresh immediately when pressed (right now must, navigate to a different page then back to remove lessons from view)
             }
         });
@@ -206,9 +207,15 @@ public class LessonListFragment extends Fragment implements MyFragmentInterface 
     }
 
     public static void setThisFactIndex(Context context, long imageID) {
+        if (!FirebaseManager.firestoreObjectLessonsGathered()) {
+            HelperCode.callInSeconds(context, () -> setThisFactIndex(context, imageID), 0.5);
+            return;
+        }
+
         if (sharedPreferences == null) {
             sharedPreferences = HelperCode.getSharedPrefsObj(context);
         }
+
 
         ArrayList<MyImage> entireHistory = getImageHistory(context);
 

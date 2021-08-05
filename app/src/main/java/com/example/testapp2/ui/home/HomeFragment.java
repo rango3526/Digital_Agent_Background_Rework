@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -57,28 +58,6 @@ public class HomeFragment extends Fragment implements MyFragmentInterface {
             passingOverFragment = false;
 
 
-        // Make sure we have the right permissions to access photos in  the background
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
-            askForExternalStoragePermission();
-        }
-        else {
-            if (context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                // Should we show an explanation?
-                if (shouldShowRequestPermissionRationale(
-                        Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    // Explain to the user why we need to read the contacts
-                }
-
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        GlobalVars.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-
-                // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
-                // app-defined int constant that should be quite unique
-            }
-        }
-
         // Begin searching for photos
         HelperCode.initializeAlarmManager(context);
         HelperCode.setTestAlarm(context);
@@ -88,18 +67,6 @@ public class HomeFragment extends Fragment implements MyFragmentInterface {
         binding.avatarImageView.setImageURI(AvatarSelectFragment.getCurAvatar(getActivity()).getImageUri());
 
         return root;
-    }
-
-    private void askForExternalStoragePermission() {
-        String appID = BuildConfig.APPLICATION_ID;
-        Uri uri = Uri.parse("package:"+appID);
-
-        startActivity(
-                new Intent(
-                        Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                        uri
-                )
-        );
     }
 
     public static void passOverFragment() {
