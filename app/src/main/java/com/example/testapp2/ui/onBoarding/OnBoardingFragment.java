@@ -1,41 +1,42 @@
-package com.example.testapp2.ui.template;
+package com.example.testapp2.ui.onBoarding;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.testapp2.DataTrackingManager;
+import com.example.testapp2.GlobalVars;
 import com.example.testapp2.HelperCode;
 import com.example.testapp2.MyFragmentInterface;
-import com.example.testapp2.databinding.FragmentSlideshowBinding;
+import com.example.testapp2.databinding.FragmentOnBoardingBinding;
+import com.example.testapp2.ui.avatarSelect.AvatarSelectFragment;
 
-public class TemplateFragment extends Fragment implements MyFragmentInterface {
+public class OnBoardingFragment extends Fragment implements MyFragmentInterface {
 
-    private com.example.testapp2.ui.template.TemplateViewModel templateViewModel;
-    private FragmentSlideshowBinding binding;
+    private OnBoardingViewModel templateViewModel;
+    private FragmentOnBoardingBinding binding;
 
-    private String sessionID = "";
+    String sessionID = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         templateViewModel =
-                new ViewModelProvider(this).get(com.example.testapp2.ui.template.TemplateViewModel.class);
+                new ViewModelProvider(this).get(OnBoardingViewModel.class);
 
-        binding = FragmentSlideshowBinding.inflate(inflater, container, false);
+        binding = FragmentOnBoardingBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Default code ^^^
-
+        // default code ^^^
         if (sessionID.equals(""))
             sessionID = HelperCode.generateLongID();
         notifyTrackerOfPage();
+
+        binding.avatarImageView.setImageURI(AvatarSelectFragment.getCurAvatar(getActivity()).getImageUri());
 
         return root;
     }
@@ -48,6 +49,6 @@ public class TemplateFragment extends Fragment implements MyFragmentInterface {
 
     @Override
     public void notifyTrackerOfPage() {
-
+        DataTrackingManager.pageChange(this, sessionID, "OnBoarding");
     }
 }

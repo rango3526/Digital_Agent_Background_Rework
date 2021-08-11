@@ -9,8 +9,10 @@ public class GlobalVars {
     public static final String PARTICIPANT_ID_PREF_KEY = "ParticipantID";
     public static final String OBJECT_LESSONS_PREF_KEY = "ObjectLessons";
     public static final String APP_REFRESH_SETTING_PREF_KEY = "AppRefresh";
+    public static final String APP_INSTALLED_PREF_KEY = "AppInstalled";
+    public static final String APP_INFO_SHOWN = "AppInfoShown";
 
     public static final String BAD_INTERNET_CONNECTION_DISPLAY_MESSAGE = "Please check your internet connection and try again";
 
-    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1231231551;  // I just randomly choose this number by typing randomly; there is no significance to it, it just needs to be "quite unique"?
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1231231551;  // I just randomly chose this number by typing randomly; there is no significance to it, it just needs to be "quite unique"?
 }

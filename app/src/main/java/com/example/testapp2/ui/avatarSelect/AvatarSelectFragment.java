@@ -73,25 +73,33 @@ public class AvatarSelectFragment extends Fragment implements MyFragmentInterfac
         Uri imageUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
                 "://" + context.getResources().getResourcePackageName(R.drawable.william)
                 + '/' + context.getResources().getResourceTypeName(R.drawable.william) + '/' + context.getResources().getResourceEntryName(R.drawable.william) );
-        AvatarModel avatar = new AvatarModel("William", "Meet William. He was always fascinated by the gravitational force and its invention and thus a huge follower of Ser Isaac Newton. He pursued this love for Physics by getting a PhD in the field from University of Pennsylvania and is passionate about educating young people about Physics in everyday life.", imageUri);
+        AvatarModel avatar = new AvatarModel("William", "Education: PhD in Physics from the University of Pennsylvania\n\n" +
+                "Interests: Teaching physics through everyday objects\n\n" +
+                "Role model: Sir Isaac Newton\n\n", imageUri);
         avatarList.add(avatar);
 
         imageUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
                 "://" + context.getResources().getResourcePackageName(R.drawable.jessica)
                 + '/' + context.getResources().getResourceTypeName(R.drawable.jessica) + '/' + context.getResources().getResourceEntryName(R.drawable.jessica) );
-        avatar = new AvatarModel("Jessica", "Meet Jessica. She got interested in Physics and Mathematics during her school years after reading about Newton’s laws. She is an ardent believer that one can gather a lot of knowledge by observing things present in one’s surroundings with curiosity, inspired by the great scientist Isaac Newton. Jessica further pursued their education at the University of Cambridge where she was taught by Stephen Hawking and currently works as an educator and entrepreneur helping others pique their interest in everyday objects.", imageUri);
+        avatar = new AvatarModel("Jessica", "Education: PhD in Physics from the University of Cambridge\n\n" +
+                "Interests: Finding scientific value in everyday objects\n\n" +
+                "Role model: Stephen Hawking\n\n", imageUri);
         avatarList.add(avatar);
 
         imageUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
                 "://" + context.getResources().getResourcePackageName(R.drawable.derek)
                 + '/' + context.getResources().getResourceTypeName(R.drawable.derek) + '/' + context.getResources().getResourceEntryName(R.drawable.derek) );
-        avatar = new AvatarModel("Derek", "Meet Derek. His passion for Mechanics developed at the age of 10 years, while satisfying his curiosity of knowing how exactly a lever works. He pursued this passion by just observing the incidents and things around him and learning about its cause and operation. He graduated from Stanford University with a Doctorate in Mechanical Engineering and started working at GE Motors and is now leading a team at Hyundai. He also has his own Youtube channel wherein he explains how a device operates every week and aspires to inspire the next generation to cherish their curiosity and build on it.", imageUri);
+        avatar = new AvatarModel("Derek", "Education: PhD in Mechanical Engineering from the Stanford University\n\n" +
+                "Interests: Observing and understanding how things work in everyday environments\n\n" +
+                "Role Model: James Watt\n\n", imageUri);
         avatarList.add(avatar);
 
         imageUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
                 "://" + context.getResources().getResourcePackageName(R.drawable.emma)
                 + '/' + context.getResources().getResourceTypeName(R.drawable.emma) + '/' + context.getResources().getResourceEntryName(R.drawable.emma) );
-        avatar = new AvatarModel("Emma", "Meet Emma. She was always interested in knowing how a particular object or electronic device works. Her favorite hobby used to be disintegrating electronic devices and learning about their internal configuration. She cherished her innate love for mechanics and electronics by pursuing a degree in Electronics and Communications Engineering from Massachusetts Institute of Technology. She completed her Masters from MIT as well by which she had found her focus: Self-driving cars. Currently, she works as a Senior Communications Engineer at Tesla and hopes to pass on her passion for electronics to the youth.", imageUri);
+        avatar = new AvatarModel("Emma", "Education: Master’s in Electronics Engineering from the Massachusetts Institute of Technology\n\n" +
+                "Interests: Opening up everyday objects and learning how they work\n\n" +
+                "Role Model: Nikola Tesla\n\n", imageUri);
         avatarList.add(avatar);
     }
 

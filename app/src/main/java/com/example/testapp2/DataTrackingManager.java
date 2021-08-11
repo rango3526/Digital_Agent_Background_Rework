@@ -228,6 +228,7 @@ public class DataTrackingManager {
         appMovedToBackground(String.valueOf(System.currentTimeMillis()));
     }
 
+    // TODO: Fix issue where if the app is completely closed, it does not properly finishPrevAppUse() (I think this is the issue anyway...)
     public static void appMovedToBackground(String entryTime) {
         if (!currentlyTracking)
             return;

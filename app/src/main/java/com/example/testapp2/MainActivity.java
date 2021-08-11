@@ -3,6 +3,8 @@ package com.example.testapp2;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -44,12 +46,18 @@ public class MainActivity extends AppCompatActivity {
     public static NavController navController;
     AppLifeCycleObserver appLifeCycleObserver;
 
+    boolean firstTimeAppUse = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Custom here
 //        ProcessLifecycleOwner.get().getLifecycle().addObserver(appLifeCycleObserver); // For detecting when app is moved between foreground and background, etc
+
+        firstTimeAppUse = !HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.APP_INSTALLED_PREF_KEY);
+        if (firstTimeAppUse)
+            HelperCode.getSharedPrefsObj(getApplicationContext()).edit().putBoolean(GlobalVars.APP_INSTALLED_PREF_KEY, true).apply();
         AvatarSelectFragment.prepareAvatarData(getApplicationContext());
 
         String participantID = HelperCode.getSharedPrefsObj(getApplicationContext()).getString(GlobalVars.PARTICIPANT_ID_PREF_KEY, "");
@@ -119,37 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
         // ^^^ Above is the default code
 
-        // if ID hasn't been chosen yet, chose it now
-        if (!HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.PARTICIPANT_ID_PREF_KEY)) {
-            navController.navigate(R.id.nav_signIn);
-        }
-        // if avatar hasn't been chosen yet, chose it now
-        else if (!HelperCode.getSharedPrefsObj(getApplicationContext()).contains(GlobalVars.AVATAR_NAME_PREF_KEY)) {
-            navController.navigate(R.id.nav_avatarSelect);
-        }
-        // Make sure we have the right permissions to access photos in  the background
-        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager()) {
-                Toast.makeText(getApplicationContext(), "Please allow access to continue", Toast.LENGTH_LONG).show();
-                HelperCode.callInSeconds(getApplicationContext(), () -> askForExternalStoragePermission(), 2);
-            }
-        }
-        else if (getApplicationContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (shouldShowRequestPermissionRationale(
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Explain to the user why we need to read the contacts
-            }
-
-            Toast.makeText(getApplicationContext(), "Please allow access to continue", Toast.LENGTH_LONG).show();
-            HelperCode.callInSeconds(getApplicationContext(), () -> requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    GlobalVars.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE), 2);
-            ;
-
-            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
-            // app-defined int constant that should be quite unique
-        }
+        checkForStartupSettings(getApplicationContext(), MainActivity.this);
 
         Intent intent = getIntent();
         if (intent != null && intent.getStringExtra("objectFound") != null) { // This is true if you got here from clicking a notification
@@ -183,6 +161,45 @@ public class MainActivity extends AppCompatActivity {
         FirebaseManager.updateFirestoreObjectLessons(getApplicationContext());
     }
 
+    public static void checkForStartupSettings(Context context, Activity activity) {
+        // if ID hasn't been chosen yet, chose it now
+        if (!HelperCode.getSharedPrefsObj(context).contains(GlobalVars.PARTICIPANT_ID_PREF_KEY)) {
+            navController.navigate(R.id.nav_signIn);
+        }
+        // if avatar hasn't been chosen yet, chose it now
+        else if (!HelperCode.getSharedPrefsObj(context).contains(GlobalVars.AVATAR_NAME_PREF_KEY)) {
+            navController.navigate(R.id.nav_avatarSelect);
+        }
+        // Make sure we have the right permissions to access photos in  the background
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                Toast.makeText(context, "Please allow access to continue", Toast.LENGTH_LONG).show();
+                HelperCode.callInSeconds(context, () -> askForExternalStoragePermission(context), 2);
+            }
+        }
+        else if (context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (activity.shouldShowRequestPermissionRationale(
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Explain to the user why we need to read the contacts
+            }
+
+            Toast.makeText(context, "Please allow access to continue", Toast.LENGTH_LONG).show();
+            HelperCode.callInSeconds(context, () -> activity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    GlobalVars.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE), 2);
+            ;
+
+            // MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE is an
+            // app-defined int constant that should be quite unique
+        }
+        // if this is the first time using the app, show the App Info page
+        else if (!HelperCode.getSharedPrefsObj(context).contains(GlobalVars.APP_INFO_SHOWN)) {
+            HelperCode.getSharedPrefsObj(context).edit().putBoolean(GlobalVars.APP_INFO_SHOWN, true).apply();
+            navController.navigate(R.id.nav_on_boarding);
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -197,11 +214,11 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    private void askForExternalStoragePermission() {
+    public static void askForExternalStoragePermission(Context context) {
         String appID = BuildConfig.APPLICATION_ID;
         Uri uri = Uri.parse("package:"+appID);
 
-        startActivity(
+        context.startActivity(
                 new Intent(
                         Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
                         uri

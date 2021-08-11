@@ -17,6 +17,11 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/settings_icon"
             android:title="@string/menu_settings" />
+
+        <item
+            android:id="@+id/nav_on_boarding"
+            android:icon="@drawable/app_info_icon"
+            android:title="@string/menu_onBoarding" />
 <!--        <item-->
 <!--            android:id="@+id/nav_gallery_bookmarked"-->
 <!--            android:icon="@drawable/bookmark_full"-->

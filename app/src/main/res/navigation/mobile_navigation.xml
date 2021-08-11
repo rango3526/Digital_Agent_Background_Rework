@@ -58,4 +58,10 @@
         android:name="com.example.testapp2.ui.settings.SettingsFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/nav_on_boarding"
+        android:name="com.example.testapp2.ui.onBoarding.OnBoardingFragment"
+        android:label="@string/menu_onBoarding"
+        tools:layout="@layout/fragment_on_boarding" />
 </navigation>

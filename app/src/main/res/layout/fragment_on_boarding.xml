@@ -17,22 +17,41 @@
 
 
     <TextView
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:autoSizeMaxTextSize="25sp"
+        android:autoSizeMinTextSize="12sp"
+        android:autoSizeStepGranularity="4sp"
+        android:gravity="center"
+        android:text="Thank you for installing [app]. This app will run in the background and will access photos taken from your smartphone’s camera. Only those photos which have been taken AFTER installing the app will be accessed. "
+        android:textColor="?android:attr/textColorPrimary"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintWidth_percent="0.9" />
+
+    <TextView
         android:id="@+id/textView4"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="20dp"
         android:autoSizeMaxTextSize="20sp"
         android:autoSizeMinTextSize="12sp"
         android:autoSizeStepGranularity="4sp"
         android:gravity="center"
-        android:text="You can navigate the app with the side menu at the top left of the screen."
+        android:text="You can stop the app at any time by navigating to Menu -> Settings and toggling the ‘App Refresh’ option. The app will analyze your photos and present science lessons about the objects it detects. You can bookmark these lessons and access them later from the Lessons tab.  "
         android:textColor="?android:attr/textColorPrimary"
         app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintHeight_percent="0.25"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
         app:layout_constraintWidth_percent="0.9" />
 
     <ImageView
@@ -51,20 +70,20 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="0dp"
-        app:layout_constraintWidth_percent="0.9"
-        app:layout_constraintHeight_percent="0.05"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:text="Hello, I'm your digital companion!"
-        android:textColor="?android:attr/textColorPrimary"
-        android:autoSizeMinTextSize="12sp"
         android:autoSizeMaxTextSize="20sp"
+        android:autoSizeMinTextSize="12sp"
         android:autoSizeStepGranularity="4sp"
+        android:gravity="center"
+        android:text="Hello!"
+        android:textColor="?android:attr/textColorPrimary"
         app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.04"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/avatarImageView"
-        android:gravity="center"/>
+        app:layout_constraintWidth_percent="0.9" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
